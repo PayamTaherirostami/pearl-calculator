@@ -643,7 +643,7 @@ result.powderAdd.map(
 {
 targetPowders[i].name ||
 powderLabels[i]
-}
+} 
 
 :{" "}
  {p.toFixed(2)} g
