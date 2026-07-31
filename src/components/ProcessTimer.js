@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
-
-export default function ProcessTimer() {
   const presets = {
     Drying: 300, // 5 min
     Mixing: 600, // 10 min
   };
+
+export default function ProcessTimer() {
 
   const [mode, setMode] = useState("Drying");
   const [timeLeft, setTimeLeft] = useState(presets.Drying);
