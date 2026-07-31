@@ -2,14 +2,17 @@ import logo from './logo.svg';
 import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import InkRatioCalculator from "./components/InkRatioCalculator";
+import ProcessTimer from './components/ProcessTimer';
+import InkCalculator from './components/InkCalculator';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+       
+        <img style={{maxWidth:150,marginTop:10}}src={logo} className="App-logo" alt="logo" />
         <p>
-         Pearl Calculator
+         Inkroom Calculator
         </p>
         <a
           className="App-link"
@@ -19,6 +22,9 @@ function App() {
         >
           Payam Taherirostami
         </a>
+        <p></p>
+        <InkCalculator />
+         <ProcessTimer />
       </header>
       <InkRatioCalculator />
     </div>

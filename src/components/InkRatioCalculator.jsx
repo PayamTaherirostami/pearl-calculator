@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 const powderLabels = [
   "Powder 1",
@@ -23,7 +23,7 @@ export default function InkRatioCalculator() {
 
   const [currentPowders, setCurrentPowders] =
     useState(createPowders());
-
+const printRef = useRef();
   const [targetWeight, setTargetWeight] =
     useState("");
 
@@ -372,19 +372,19 @@ export default function InkRatioCalculator() {
 
 
 return (
+<div className="ink-ratio-container" ref={printRef}>
+<div className="container mt-4" >
 
-<div className="container mt-4">
-
-<h2>
+{/* <h2>
 Ink Ratio Calculator
-</h2>
+</h2> */}
 
 
 
-<div className="mb-3">
+<div className="mb-3" style={{ marginTop: "-20px" }}>
 
 
-<label className="me-4">
+<label className="me-4" style={{ marginTop: "-20px" }}>
 
 <input
 type="radio"
@@ -633,12 +633,12 @@ Clear To Add: {" "}
 </h5>
 
 
-
+<h6 style={{marginTop:5}}>
 {
 result.powderAdd.map(
 (p,i)=>(
 
-<div key={i}>
+<div key={i} style={{marginTop:5}}>
 
 {
 targetPowders[i].name ||
@@ -654,7 +654,7 @@ powderLabels[i]
 
 }
 
-
+</h6>
 
 <hr/>
 
@@ -669,13 +669,27 @@ Final Weight:
 
 }
 
-
+<div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    marginTop: 20,
+  }}
+>
+  <button
+    className="btn btn-success"
+    onClick={() => window.print()}
+  >
+    🖨 Print This Sheet
+  </button>
+</div>
 </div>
 
 }
 
 
 
+</div>
 </div>
 
 );
