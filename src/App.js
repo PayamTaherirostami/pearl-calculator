@@ -13,11 +13,11 @@ function App() {
         </p>
         <a
           className="App-link"
-          href=""
+          href="https://www.wearandwonder.shop/payam-taherirostami.html"
           target="_blank"
           rel="noopener noreferrer"
         >
-          LPayam Taherirostami
+          Payam Taherirostami
         </a>
       </header>
       <InkRatioCalculator />
