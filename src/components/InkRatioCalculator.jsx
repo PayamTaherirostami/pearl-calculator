@@ -394,7 +394,7 @@ setMode("new")
 }
 />
 
-New Batch
+ <span>  </span>New Batch
 
 </label>
 
@@ -410,7 +410,7 @@ setMode("adjust")
 }
 />
 
-Adjust Existing
+<span>  </span>Adjust Existing
 
 </label>
 
@@ -590,6 +590,7 @@ e.target.value
 
 
 <button
+style={{width:"100%"}}
 className="btn btn-primary mt-3"
 onClick={calculate}
 >
@@ -677,6 +678,7 @@ Final Weight:
   }}
 >
   <button
+  style={{width:"100%"}}
     className="btn btn-success"
     onClick={() => window.print()}
   >

@@ -12,14 +12,42 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
+.header-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  flex-wrap: nowrap;
+}
 
-.App-header {
-  background-color: #282c34;
-  height: 32vh;
+
+.timer-row {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  flex-shrink: 1;
+}
+
+
+.header-logo {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  width: 150px;
+}
+.App-header {
+  background-color: #282c34;
+  min-height: 32vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   font-size: calc(10px + 2vmin);
   color: white;
 }
@@ -88,7 +116,7 @@ transition:.4s;
 }
 
 
-.timerCard {
+/* .timerCard {
     position: fixed;
     top: 15px;
     left: 15px;
@@ -113,8 +141,30 @@ transition:.4s;
     animation:gradient 10s infinite alternate;
 
     text-align:center;
-}
+} */
+.timerCard {
+position: relative;
+width: 220px;
+height: 310px;
+padding: 15px;
 
+border-radius: 18px;
+
+background: rgba(255,255,255,.08);
+backdrop-filter: blur(15px);
+
+box-shadow:
+    0 10px 30px rgba(0,0,0,.35),
+    inset 0 1px rgba(255,255,255,.2);
+
+background-image:
+    linear-gradient(145deg,#0f172a,#1d4ed8,#312e81);
+
+background-size:300%;
+animation:gradient 10s infinite alternate;
+
+text-align:center;
+}
 
 .timerCard h2 {
     font-size: 16px;
@@ -292,10 +342,10 @@ width:100%;
 
 }
 .calculator-card {
-  position: fixed;
+  /* position: fixed;
   top: 15px;
- right: 20px;
-
+ right: 20px; */
+position: relative;
   width: 220px;
 height: 310px;
   padding: 12px;
@@ -497,4 +547,70 @@ margin-top: -10px;
     display: none;
   }
 
+}
+.timer-row {
+  display: flex;
+  flex-direction: row;
+  gap: 45px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  width: 100%;
+  padding: 15px;
+}
+.timer-btn {
+  width:70px;
+  height:35px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+
+  font-size:18px;
+  font-weight:bold;
+
+  background:
+  linear-gradient(
+    135deg,
+    #00c6ff,
+    #0072ff
+  );
+
+  color:white;
+  transition:.2s;
+}
+.timer-btn2 {
+  width:150px;
+  height:35px;
+  border:none;
+    display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:18px;
+  font-weight:bold;
+  background:
+  linear-gradient(
+    135deg,
+    #00c6ff,
+    #0072ff
+  );
+  color:white;
+  transition:.2s;
+}
+
+.timer-btn:hover {
+  transform:translateY(-3px);
+}
+.timer-row > * {
+  flex: 0 0 auto;
+}
+
+.timer-row > * {
+  flex: 0 0 auto;
 }
