@@ -7,6 +7,7 @@ import ProcessTimer from './components/ProcessTimer';
 import InkCalculator from './components/InkCalculator';
 import Calculator from './components/Calculator';
 import PercentageCalculator from './components/PercentageCalculator';
+import BACLookup from './components/BACLookup';
 
 function App() {
   return (
@@ -30,31 +31,13 @@ function App() {
 
             <PercentageCalculator />
 
+            <BACLookup />
+
           </div>
 
 
           {/* Right Side Logo */}
-          <div className="header-logo"
-          //  style={{marginLeft:-300}}
-           >
-
-            <img
-              style={{maxWidth:150,marginLeft:-80, marginTop:-130}}
-              src={logo}
-              className="App-logo"
-              alt="logo"
-            />
-
-            <a
-              className="App-link"
-               style={{maxWidth:150,marginLeft:-90,marginTop:-120}}
-              href="https://www.wearandwonder.shop/payam-taherirostami.html"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Payam 
-            </a>
-
+          <div className="header-logo">
           </div>
 
         </div>
@@ -63,9 +46,30 @@ function App() {
 
 
       {/* Bottom */}
-      <div style={{ marginTop:"25px", padding:"15px" }}>
+      <div style={{ marginTop: "25px", padding: "15px" }}>
         <InkRatioCalculator />
       </div>
+
+
+      {/* Footer */}
+      <footer className="app-footer">
+
+        <img
+          src={logo}
+          className="App-logo"
+          alt="Payam"
+        />
+
+        <a
+          className="footer-link"
+          href="https://www.wearandwonder.shop/payam-taherirostami.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Payam
+        </a>
+
+      </footer>
 
     </div>
   );
