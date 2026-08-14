@@ -1,3 +1,16 @@
+// import React, { useState } from "react";
+// import bacData from "./bacData.json";
+// import "../App.css";
+
+// // =====================================
+// // DROPDOWN OPTIONS
+// // =====================================
+
+
+
+
+
+
 import React, { useState } from "react";
 import bacData from "./bacData.json";
 import "../App.css";
@@ -124,29 +137,48 @@ const textureOptions = [
 
 export default function BACLookup() {
   const [bac, setBac] = useState("");
-const [texture, setTexture] = useState("");
-const [textureSearch, setTextureSearch] = useState("");
-const [showDropdown, setShowDropdown] = useState(false);
-
+  const [texture, setTexture] = useState("");
+  const [textureSearch, setTextureSearch] = useState("");
+  const [airline, setAirline] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const [result, setResult] = useState(null);
-const filteredTextures = textureOptions.filter((option) =>
-  option.toLowerCase().includes(textureSearch.toLowerCase())
-);
-  const handleSearch = () => {
-    if (!bac || !texture) {
+
+  const filteredTextures = textureOptions.filter((option) =>
+    option.toLowerCase().includes(textureSearch.toLowerCase())
+  );
+
+  // =====================================
+  // SEARCH
+  // =====================================
+  const handleSearch = (bacValue, textureValue, airlineValue) => {
+
+    const cleanBac = String(bacValue || "").trim();
+    const cleanTexture = String(textureValue || "").trim();
+    const cleanAirline = String(airlineValue || "").trim();
+
+    // Don't search until all 3 values exist
+    if (!cleanBac || !cleanTexture || !cleanAirline) {
       setResult(null);
       return;
     }
 
-    // Create the Column1 key
-    const key = `${bac}-${texture}`;
+    // Create key:
+    // BAC-TEXTURE-AIRLINE
+    const key = `${cleanBac}-${cleanTexture}-${cleanAirline}`;
 
-    // Find matching record in JSON
-    const found = bacData.find(
-      (item) =>
-        item.Column1.toString().toUpperCase() === key.toUpperCase()
-    );
+    console.log("Searching for:", key);
+
+    const found = bacData.find((item) => {
+
+      const jsonKey = String(item.Column1 || "")
+        .trim()
+        .toUpperCase();
+
+      return jsonKey === key.toUpperCase();
+    });
+
+    console.log("Found:", found);
 
     setResult(found || { notFound: true, key });
   };
@@ -158,114 +190,161 @@ const filteredTextures = textureOptions.filter((option) =>
 
       {/* BAC NUMBER */}
       <div className="calculator-row">
-        {/* <label>BAC#</label> */}
 
         <input
           type="number"
           value={bac}
-            style={{width:200, marginBottom:5, height:35,
-                        width: "100%",
-          padding: "8px",
-          // marginBottom: "8px",
-          borderRadius: "6px",
-          fontSize: "14px",
-          boxSizing: "border-box",
-          marginTop:-5
-            }}
+          style={{
+            width: 200,
+            marginBottom: 5,
+            height: 35,
+            width: "100%",
+            padding: "8px",
+            borderRadius: "6px",
+            fontSize: "14px",
+            boxSizing: "border-box",
+            marginTop: -5
+          }}
           onChange={(e) => {
-            setBac(e.target.value);
+            const value = e.target.value;
+
+            setBac(value);
             setResult(null);
+
+            handleSearch(value, texture, airline);
           }}
           placeholder="BAC#"
         />
+
       </div>
 
       {/* DROPDOWN */}
-<div className="calculator-row">
-  {/* <label>Type</label> */}
+      <div className="calculator-row">
 
-  <div className="searchable-dropdown">
+        <div className="searchable-dropdown">
 
-    <input
-      type="text"
-      style={{width:200 , height:35,
-                  width: "100%",
-          padding: "8px",
-          // marginBottom: "8px",
-          borderRadius: "6px",
-          fontSize: "14px",
-          boxSizing: "border-box",
-      }}
-      value={textureSearch}
-      placeholder="Select..."
-      onFocus={() => setShowDropdown(true)}
-      onChange={(e) => {
-        setTextureSearch(e.target.value);
-        setShowDropdown(true);
-        setTexture("");
-        setResult(null);
-      }}
-    />
+          <input
+            type="text"
+            style={{
+              width: 200,
+              height: 35,
+              width: "100%",
+              padding: "8px",
+              borderRadius: "6px",
+              fontSize: "14px",
+              boxSizing: "border-box",
+            }}
+            value={textureSearch}
+            placeholder="Select..."
+            onFocus={() => setShowDropdown(true)}
+            onChange={(e) => {
 
-    {showDropdown && (
-      <div className="dropdown-options">
+              const value = e.target.value;
 
-        {filteredTextures.length > 0 ? (
-          filteredTextures.map((option) => (
-            <div
-              key={option}
-              className="dropdown-option"
-              onMouseDown={() => {
-                setTexture(option);
-                setTextureSearch(option);
-                setShowDropdown(false);
-                setResult(null);
-              }}
-            >
-              {option}
+              setTextureSearch(value);
+              setShowDropdown(true);
+              setTexture("");
+              setResult(null);
+
+            }}
+          />
+
+          {showDropdown && (
+            <div className="dropdown-options">
+
+              {filteredTextures.length > 0 ? (
+                filteredTextures.map((option) => (
+
+                  <div
+                    key={option}
+                    className="dropdown-option"
+                    onMouseDown={() => {
+
+                      setTexture(option);
+                      setTextureSearch(option);
+                      setShowDropdown(false);
+                      setResult(null);
+
+                      handleSearch(
+                        bac,
+                        option,
+                        airline
+                      );
+
+                    }}
+                  >
+                    {option}
+                  </div>
+
+                ))
+              ) : (
+
+                <div className="dropdown-no-results">
+                  No match
+                </div>
+
+              )}
+
             </div>
-          ))
-        ) : (
-          <div className="dropdown-no-results">
-            No match
-          </div>
-        )}
+          )}
+
+        </div>
+      </div>
+
+      {/* AIRLINE */}
+      <div className="calculator-row">
+
+        <input
+          type="text"
+          value={airline}
+          style={{
+            width: 200,
+            height: 35,
+            width: "100%",
+            padding: "8px",
+            borderRadius: "6px",
+            fontSize: "14px",
+            boxSizing: "border-box",
+          }}
+          onChange={(e) => {
+
+            const value = e.target.value;
+
+            setAirline(value);
+
+            handleSearch(
+              bac,
+              texture,
+              value
+            );
+
+          }}
+          placeholder="Airline"
+        />
 
       </div>
-    )}
 
-  </div>
-</div>
+      {/* =====================================
+          RESULTS
+          DIRECTLY BELOW AIRLINE INPUT
+      ===================================== */}
 
-      {/* SHOW CREATED KEY */}
-      {/* {bac && texture && (
-        <div className="bac-key">
-          Key: <strong>{bac}-{texture}</strong>
-        </div>
-      )} */}
-
-      {/* FIND BUTTON */}
-      <button className="timer-btn"  style={{marginTop:10, marginLeft:60}} onClick={handleSearch}>
-        Find
-      </button>
-
-      {/* RESULTS */}
       {result && !result.notFound && (
         <div className="bac-result">
 
-          <div style={{fontSize:22, marginTop:5}}>
+          <div style={{ fontSize: 22, marginTop: 5 }}>
             Cart: {result.Cart}
           </div>
 
-          <div style={{fontSize:22, marginTop:5}}>
+          <div style={{ fontSize: 22, marginTop: 5 }}>
             Bin: {result.Bin}
           </div>
 
-          <div style={{fontSize:22, marginTop:5}}>
+          <div style={{ fontSize: 22, marginTop: 5 }}>
             Airline: {result.Airline}
           </div>
 
-          <div style={{fontSize:22, marginTop:5}}>
+          <div style={{ fontSize: 22, marginTop: 5 }}>
             Cap: {result.Cap}
           </div>
 
