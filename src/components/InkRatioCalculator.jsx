@@ -81,293 +81,607 @@ const printRef = useRef();
 
 
 
-  const calculate = () => {
+  // const calculate = () => {
 
 
-    const desiredWeight =
-      Number(targetWeight);
-
-
-
-    if(!desiredWeight || desiredWeight <= 0){
-
-      setResult({
-        error:"Enter desired final weight."
-      });
-
-      return;
-
-    }
+  //   const desiredWeight =
+  //     Number(targetWeight);
 
 
 
-    let currentClear = 0;
+  //   if(!desiredWeight || desiredWeight <= 0){
 
-    let currentAmounts =
-      Array(5).fill(0);
+  //     setResult({
+  //       error:"Enter desired final weight."
+  //     });
 
+  //     return;
 
-
-    /*
-       CURRENT INK
-    */
-
-    if(mode === "adjust"){
-
-
-      const currentRatio =
-        currentPowders.reduce(
-          (sum,p)=>
-          sum + Number(p.ratio || 0),
-          0
-        );
+  //   }
 
 
 
-      currentClear =
-        Number(currentWeight) /
-        (1 + currentRatio / 100);
+  //   let currentClear = 0;
+
+  //   let currentAmounts =
+  //     Array(5).fill(0);
 
 
 
-      currentAmounts =
-        currentPowders.map(
-          p =>
+  //   /*
+  //      CURRENT INK
+  //   */
+
+  //   if(mode === "adjust"){
+
+
+  //     const currentRatio =
+  //       currentPowders.reduce(
+  //         (sum,p)=>
+  //         sum + Number(p.ratio || 0),
+  //         0
+  //       );
+
+
+
+  //     currentClear =
+  //       Number(currentWeight) /
+  //       (1 + currentRatio / 100);
+
+
+
+  //     currentAmounts =
+  //       currentPowders.map(
+  //         p =>
+  //         currentClear *
+  //         Number(p.ratio || 0) /
+  //         100
+  //       );
+
+
+
+  //     /*
+  //       If same formula:
+  //       just use existing ink
+  //     */
+
+  //     if(
+  //       formulasMatch() &&
+  //       Number(currentWeight) >= desiredWeight
+  //     ){
+
+  //       setResult({
+
+  //         message:
+  //         "Existing ink already matches the target formula. Use required amount.",
+
+  //         clearAdd:0,
+
+  //         powderAdd:Array(5).fill(0),
+
+  //         finalWeight:desiredWeight
+
+  //       });
+
+  //       return;
+
+  //     }
+
+
+
+
+  //     /*
+  //       Existing powder cannot disappear
+  //     */
+
+
+  //     if(!formulasMatch()){
+
+
+  //       for(let i=0;i<5;i++){
+
+
+  //         const currentRatio =
+  //           Number(currentPowders[i].ratio || 0);
+
+
+  //         const targetRatio =
+  //           Number(targetPowders[i].ratio || 0);
+
+
+
+  //         if(
+  //           currentRatio > 0 &&
+  //           targetRatio === 0
+  //         ){
+
+  //           setResult({
+
+  //             error:
+  //             `Cannot remove ${
+  //               currentPowders[i].name ||
+  //               powderLabels[i]
+  //             }. It exists in current ink but is missing from target formula.`
+
+  //           });
+
+
+  //           return;
+
+  //         }
+
+  //       }
+
+  //     }
+
+
+  //   }
+
+
+
+  //   /*
+  //     TARGET FORMULA
+  //   */
+
+
+  //   const targetRatio =
+  //     targetPowders.reduce(
+  //       (sum,p)=>
+  //       sum + Number(p.ratio || 0),
+  //       0
+  //     );
+
+
+
+  //   let finalWeight =
+  //     desiredWeight;
+
+
+
+  //   let targetClear =
+  //     finalWeight /
+  //     (1 + targetRatio / 100);
+
+
+
+  //   let targetAmounts =
+  //     targetPowders.map(
+  //       p =>
+  //       targetClear *
+  //       Number(p.ratio || 0) /
+  //       100
+  //     );
+
+
+
+
+  //   /*
+  //     Adjust Existing Logic
+  //   */
+
+
+  //   if(mode === "adjust"){
+
+
+  //     let impossible = false;
+
+
+
+  //     if(
+  //       targetClear < currentClear &&
+  //       !formulasMatch()
+  //     ){
+
+  //       impossible = true;
+
+  //     }
+
+
+
+  //     for(let i=0;i<5;i++){
+
+  //       if(
+  //         targetAmounts[i] <
+  //         currentAmounts[i]
+  //       ){
+
+  //         impossible = true;
+
+  //       }
+
+  //     }
+
+
+
+
+  //     if(impossible){
+
+
+  //       finalWeight =
+  //         Math.max(
+  //           desiredWeight,
+  //           currentClear *
+  //           (1 + targetRatio / 100)
+  //         );
+
+
+
+  //       targetClear =
+  //         finalWeight /
+  //         (1 + targetRatio / 100);
+
+
+
+  //       targetAmounts =
+  //         targetPowders.map(
+  //           p =>
+  //           targetClear *
+  //           Number(p.ratio || 0) /
+  //           100
+  //         );
+
+  //     }
+
+
+  //   }
+
+
+
+  //   const clearAdd =
+  //     mode === "adjust"
+  //     ?
+  //     targetClear-currentClear
+  //     :
+  //     targetClear;
+
+
+
+  //   const powderAdd =
+  //     targetAmounts.map(
+  //       (p,i)=>
+
+  //       mode==="adjust"
+  //       ?
+  //       p-currentAmounts[i]
+  //       :
+  //       p
+  //     );
+
+
+
+
+  //   setResult({
+
+  //     clearAdd,
+
+  //     powderAdd,
+
+  //     finalWeight,
+
+  //     currentClear,
+
+  //     targetClear
+
+  //   });
+
+
+  // };
+
+const calculate = () => {
+
+  const desiredWeight = Number(targetWeight);
+
+  if (!desiredWeight || desiredWeight <= 0) {
+    setResult({
+      error: "Enter desired final weight."
+    });
+    return;
+  }
+
+  let currentClear = 0;
+  let currentAmounts = Array(5).fill(0);
+
+  /*
+    CURRENT INK
+  */
+
+  if (mode === "adjust") {
+
+    const currentRatio =
+      currentPowders.reduce(
+        (sum, p) => sum + Number(p.ratio || 0),
+        0
+      );
+
+    currentClear =
+      Number(currentWeight) /
+      (1 + currentRatio / 100);
+
+    currentAmounts =
+      currentPowders.map(
+        p =>
           currentClear *
           Number(p.ratio || 0) /
           100
-        );
+      );
+
+    /*
+      If same formula and enough existing ink,
+      no additions are needed.
+    */
+
+    if (
+      formulasMatch() &&
+      Number(currentWeight) >= desiredWeight
+    ) {
+
+      setResult({
+        message:
+          "Existing ink already matches the target formula. Use the required amount.",
+
+        clearAdd: 0,
+
+        powderAdd: Array(5).fill(0),
+
+        finalWeight: desiredWeight
+      });
+
+      return;
+    }
+
+    /*
+      Existing powder cannot disappear.
+    */
+
+    if (!formulasMatch()) {
+
+      for (let i = 0; i < 5; i++) {
+
+        const currentRatio =
+          Number(currentPowders[i].ratio || 0);
+
+        const targetRatio =
+          Number(targetPowders[i].ratio || 0);
+
+        if (
+          currentRatio > 0 &&
+          targetRatio === 0
+        ) {
+
+          setResult({
+            error:
+              `Cannot remove ${
+                currentPowders[i].name ||
+                powderLabels[i]
+              }. It exists in the current ink but is missing from the target formula.`
+          });
+
+          return;
+        }
+      }
+    }
+  }
 
 
+  /*
+    TARGET FORMULA
+  */
+
+  const targetRatio =
+    targetPowders.reduce(
+      (sum, p) =>
+        sum + Number(p.ratio || 0),
+      0
+    );
+
+
+  let finalWeight = desiredWeight;
+
+  let targetClear =
+    finalWeight /
+    (1 + targetRatio / 100);
+
+  let targetAmounts =
+    targetPowders.map(
+      p =>
+        targetClear *
+        Number(p.ratio || 0) /
+        100
+    );
+
+
+  /*
+    ADJUST EXISTING
+  */
+
+  if (mode === "adjust") {
+
+    /*
+      Calculate the minimum final weight required
+      so that NONE of the existing powder has
+      to be removed.
+    */
+
+    let minimumWeight =
+      currentClear *
+      (1 + targetRatio / 100);
+
+
+    for (let i = 0; i < 5; i++) {
+
+      const targetRatioForPowder =
+        Number(targetPowders[i].ratio || 0);
+
+      const currentAmount =
+        currentAmounts[i];
 
       /*
-        If same formula:
-        just use existing ink
+        If this powder already exists in the
+        current ink, calculate how much total
+        ink is needed to contain that amount
+        at the target ratio.
       */
 
-      if(
-        formulasMatch() &&
-        Number(currentWeight) >= desiredWeight
-      ){
+      if (
+        currentAmount > 0 &&
+        targetRatioForPowder > 0
+      ) {
+
+        const requiredWeight =
+          currentAmount *
+          100 /
+          targetRatioForPowder *
+          (1 + targetRatio / 100) /
+          100;
+
+        minimumWeight =
+          Math.max(
+            minimumWeight,
+            requiredWeight
+          );
+      }
+    }
+
+
+    /*
+      If requested weight is too low,
+      DO NOT show negative powder.
+
+      Instead tell user to increase weight.
+    */
+
+    // if (desiredWeight < minimumWeight) {
+
+    //   setResult({
+
+    //     error:
+    //       `The requested final weight of ${desiredWeight.toFixed(2)} g is too low. ` +
+    //       `You cannot remove powder from the existing ink. ` +
+    //       `Increase the requested final weight to at least ${minimumWeight.toFixed(2)} g ` +
+    //       `to make this formula possible.`,
+
+    //     minimumWeight: minimumWeight
+
+    //   });
+
+    //   return;
+    // }
+if (desiredWeight < minimumWeight) {
+
+  setResult({
+    error: true,
+    requestedWeight: desiredWeight,
+    minimumWeight: minimumWeight,
+    errorMessage:
+      "The requested final weight is too low because existing powder cannot be removed."
+  });
+
+  return;
+}
+
+    /*
+      Recalculate using requested weight
+    */
+
+    finalWeight = desiredWeight;
+
+    targetClear =
+      finalWeight /
+      (1 + targetRatio / 100);
+
+    targetAmounts =
+      targetPowders.map(
+        p =>
+          targetClear *
+          Number(p.ratio || 0) /
+          100
+      );
+
+
+    /*
+      Final safety check.
+      This guarantees powderAdd can never be negative.
+    */
+
+    for (let i = 0; i < 5; i++) {
+
+      if (
+        targetAmounts[i] <
+        currentAmounts[i] - 0.000001
+      ) {
 
         setResult({
 
-          message:
-          "Existing ink already matches the target formula. Use required amount.",
-
-          clearAdd:0,
-
-          powderAdd:Array(5).fill(0),
-
-          finalWeight:desiredWeight
+          error:
+            `The requested final weight is too low. ` +
+            `Increase the requested weight to make ` +
+            `${currentPowders[i].name || powderLabels[i]} possible.`
 
         });
 
         return;
-
       }
-
-
-
-
-      /*
-        Existing powder cannot disappear
-      */
-
-
-      if(!formulasMatch()){
-
-
-        for(let i=0;i<5;i++){
-
-
-          const currentRatio =
-            Number(currentPowders[i].ratio || 0);
-
-
-          const targetRatio =
-            Number(targetPowders[i].ratio || 0);
-
-
-
-          if(
-            currentRatio > 0 &&
-            targetRatio === 0
-          ){
-
-            setResult({
-
-              error:
-              `Cannot remove ${
-                currentPowders[i].name ||
-                powderLabels[i]
-              }. It exists in current ink but is missing from target formula.`
-
-            });
-
-
-            return;
-
-          }
-
-        }
-
-      }
-
-
     }
+  }
 
 
+  /*
+    ADDITIONS
+  */
 
-    /*
-      TARGET FORMULA
-    */
-
-
-    const targetRatio =
-      targetPowders.reduce(
-        (sum,p)=>
-        sum + Number(p.ratio || 0),
-        0
-      );
+  const clearAdd =
+    mode === "adjust"
+      ? targetClear - currentClear
+      : targetClear;
 
 
-
-    let finalWeight =
-      desiredWeight;
-
-
-
-    let targetClear =
-      finalWeight /
-      (1 + targetRatio / 100);
+  const powderAdd =
+    targetAmounts.map(
+      (p, i) =>
+        mode === "adjust"
+          ? p - currentAmounts[i]
+          : p
+    );
 
 
+  /*
+    FINAL SAFETY:
+    Never allow negative additions.
+  */
 
-    let targetAmounts =
-      targetPowders.map(
-        p =>
-        targetClear *
-        Number(p.ratio || 0) /
-        100
-      );
-
-
-
-
-    /*
-      Adjust Existing Logic
-    */
-
-
-    if(mode === "adjust"){
-
-
-      let impossible = false;
-
-
-
-      if(
-        targetClear < currentClear &&
-        !formulasMatch()
-      ){
-
-        impossible = true;
-
-      }
-
-
-
-      for(let i=0;i<5;i++){
-
-        if(
-          targetAmounts[i] <
-          currentAmounts[i]
-        ){
-
-          impossible = true;
-
-        }
-
-      }
-
-
-
-
-      if(impossible){
-
-
-        finalWeight =
-          Math.max(
-            desiredWeight,
-            currentClear *
-            (1 + targetRatio / 100)
-          );
-
-
-
-        targetClear =
-          finalWeight /
-          (1 + targetRatio / 100);
-
-
-
-        targetAmounts =
-          targetPowders.map(
-            p =>
-            targetClear *
-            Number(p.ratio || 0) /
-            100
-          );
-
-      }
-
-
-    }
-
-
-
-    const clearAdd =
-      mode === "adjust"
-      ?
-      targetClear-currentClear
-      :
-      targetClear;
-
-
-
-    const powderAdd =
-      targetAmounts.map(
-        (p,i)=>
-
-        mode==="adjust"
-        ?
-        p-currentAmounts[i]
-        :
-        p
-      );
-
-
-
+  if (powderAdd.some(p => p < -0.000001)) {
 
     setResult({
-
-      clearAdd,
-
-      powderAdd,
-
-      finalWeight,
-
-      currentClear,
-
-      targetClear
-
+      error:
+        "The requested final weight is too low. Increase the requested weight because powder cannot be removed from the existing ink."
     });
 
+    return;
+  }
 
-  };
 
+  setResult({
 
+    clearAdd,
+
+    /*
+      Prevent tiny floating-point values such as
+      -0.00000001 from appearing.
+    */
+    powderAdd:
+      powderAdd.map(
+        p => Math.max(0, p)
+      ),
+
+    finalWeight,
+
+    currentClear,
+
+    targetClear
+
+  });
+
+};
 
 
 
@@ -610,7 +924,32 @@ result &&
 result.error ?
 
 <div className="alert alert-danger">
-{result.error}
+
+  <h5 style={{ marginBottom: 10 }}>
+    ⚠️ Requested Weight Too Low
+  </h5>
+
+  <p style={{ marginBottom: 8 }}>
+    {result.errorMessage}
+  </p>
+
+  <p style={{ marginBottom: 8 }}>
+    <strong>Requested Final Weight:</strong>{" "}
+    {result.requestedWeight.toFixed(2)} g
+  </p>
+
+  <p style={{ marginBottom: 8 }}>
+    <strong>Minimum Final Weight:</strong>{" "}
+    {result.minimumWeight.toFixed(2)} g
+  </p>
+
+  <hr />
+
+  <p style={{ marginBottom: 0, fontWeight: "bold" }}>
+    Increase the requested final weight to at least{" "}
+    {result.minimumWeight.toFixed(2)} g.
+  </p>
+
 </div>
 
 
