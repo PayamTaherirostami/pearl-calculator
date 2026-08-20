@@ -2,14 +2,21 @@ import logo from './logo.svg';
 import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import { Routes, Route, useNavigate } from "react-router-dom";
+
 import InkRatioCalculator from "./components/InkRatioCalculator";
 import ProcessTimer from './components/ProcessTimer';
 import InkCalculator from './components/InkCalculator';
 import Calculator from './components/Calculator';
 import PercentageCalculator from './components/PercentageCalculator';
 import BACLookup from './components/BACLookup';
+import Ink from './components/Ink';
 
-function App() {
+
+function Home() {
+
+  const navigate = useNavigate();
+
   return (
     <div>
 
@@ -18,7 +25,6 @@ function App() {
 
         <div className="header-row">
 
-          {/* Calculators */}
           <div className="timer-row">
 
             <ProcessTimer />
@@ -33,10 +39,11 @@ function App() {
 
             <BACLookup />
 
+            {/* Open Ink page */}
+
+
           </div>
 
-
-          {/* Right Side Logo */}
           <div className="header-logo">
           </div>
 
@@ -68,11 +75,39 @@ function App() {
         >
           Payam
         </a>
-
+            <button
+              onClick={() => navigate("/ink")}
+              style={{
+                padding: "10px 15px",
+                margin: "10px",
+                borderRadius: "8px",
+                border: "none",
+                cursor: "pointer"
+              }}
+            >
+              Ink values
+            </button>
       </footer>
 
     </div>
   );
 }
+
+
+function App() {
+
+  return (
+    <Routes>
+
+      {/* Main page */}
+      <Route path="/" element={<Home />} />
+
+      {/* Ink page */}
+      <Route path="/ink" element={<Ink />} />
+
+    </Routes>
+  );
+}
+
 
 export default App;
