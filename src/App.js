@@ -50,24 +50,18 @@ function Home() {
         </div>
 
       </div>
-
-
-      {/* Bottom */}
-      <div style={{ marginTop: "25px", padding: "15px" }}>
-        <InkRatioCalculator />
-      </div>
-
-
       {/* Footer */}
       <footer className="app-footer">
 
         <img
+        style={{marginLeft:50}}
           src={logo}
           className="App-logo"
           alt="Payam"
         />
 
         <a
+        style={{marginRight:450}}
           className="footer-link"
           href="https://www.wearandwonder.shop/payam-taherirostami.html"
           target="_blank"
@@ -78,8 +72,11 @@ function Home() {
             <button
               onClick={() => navigate("/ink")}
               style={{
+                maxWidth: "500px",
                 padding: "10px 15px",
-                margin: "10px",
+                // margin: "10px",
+                // marginLeft:"200px",
+                // marginRight:"400px",
                 borderRadius: "8px",
                 border: "none",
                 cursor: "pointer"
@@ -88,6 +85,14 @@ function Home() {
               Ink values
             </button>
       </footer>
+
+      {/* Bottom */}
+      <div style={{ marginTop: "25px", padding: "15px" }}>
+        <InkRatioCalculator />
+      </div>
+
+
+
 
     </div>
   );

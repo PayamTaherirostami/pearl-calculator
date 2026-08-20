@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import logo from '../logo.svg';
 import { db } from "../firebase";
 import '../App2.css';
 import {
@@ -151,7 +151,8 @@ function Ink() {
   const [backing, setBacking] =
     useState("");
 
-
+const [remakeWeights, setRemakeWeights] =
+  useState({});
   // ===================================================
   // BEFORE FLIP TONERS
   // ===================================================
@@ -414,36 +415,36 @@ function Ink() {
     const targetB = -B;
 
 
-    console.log(
-      "Original Delta L:",
-      L
-    );
+    // console.log(
+    //   "Original Delta L:",
+    //   L
+    // );
 
-    console.log(
-      "Original Delta A:",
-      A
-    );
+    // console.log(
+    //   "Original Delta A:",
+    //   A
+    // );
 
-    console.log(
-      "Original Delta B:",
-      B
-    );
+    // console.log(
+    //   "Original Delta B:",
+    //   B
+    // );
 
 
-    console.log(
-      "Target Delta L:",
-      targetL
-    );
+    // console.log(
+    //   "Target Delta L:",
+    //   targetL
+    // );
 
-    console.log(
-      "Target Delta A:",
-      targetA
-    );
+    // console.log(
+    //   "Target Delta A:",
+    //   targetA
+    // );
 
-    console.log(
-      "Target Delta B:",
-      targetB
-    );
+    // console.log(
+    //   "Target Delta B:",
+    //   targetB
+    // );
 
 
     setFlipDeltaL(
@@ -706,16 +707,16 @@ function Ink() {
         toners:
           beforeToners,
 
-        deltaE:
+        ΔE:
           beforeDeltaE,
 
-        deltaL:
+        Δl:
           beforeDeltaL,
 
-        deltaA:
+        Δa:
           beforeDeltaA,
 
-        deltaB:
+        Δb:
           beforeDeltaB,
 
         totalInk:
@@ -801,7 +802,9 @@ function Ink() {
       "📂 LOADING RECORD:",
       record
     );
-
+setRemakeWeights({
+  [record.id]: ""
+});
 
     setCurrentDocumentId(
       record.id
@@ -1329,16 +1332,16 @@ function Ink() {
 
       afterFlip: {
 
-        deltaE:
+        ΔE:
           afterDeltaE,
 
-        deltaL:
+        Δl:
           afterDeltaL,
 
-        deltaA:
+        Δa:
           afterDeltaA,
 
-        deltaB:
+        Δb:
           afterDeltaB,
 
         toners:
@@ -1564,7 +1567,85 @@ function Ink() {
       "12px"
 
   };
+// =====================================================
+// REMAKE CALCULATOR
+// =====================================================
 
+const calculateRemake = (record, targetWeight) => {
+
+  const target = parseFloat(targetWeight);
+
+  if (!target || target <= 0) {
+    return [];
+  }
+
+  // Use AFTER-FLIP toner summary if available
+  if (
+    record.afterFlip &&
+    record.afterFlip.toners &&
+    record.afterFlip.toners.length > 0
+  ) {
+
+    return record.afterFlip.toners.map((toner) => {
+
+      const percentage =
+        parseFloat(toner.percentage) || 0;
+
+      const remakeAmount =
+        target * (percentage / 100);
+
+      return {
+        tonerNumber: toner.tonerNumber,
+        percentage: percentage,
+        amount: remakeAmount
+      };
+
+    });
+
+  }
+
+
+  // Otherwise use BEFORE-FLIP toners
+
+  const toners =
+    record.beforeFlip?.toners || [];
+
+  const total =
+    parseFloat(
+      record.beforeFlip?.totalInk
+    ) || 0;
+
+
+  if (!total) {
+    return [];
+  }
+
+
+  return toners.map((toner) => {
+
+    const tonerAmount =
+      getTonerTotal(toner);
+
+    const percentage =
+      (tonerAmount / total) * 100;
+
+    const remakeAmount =
+      target * (percentage / 100);
+
+    return {
+      tonerNumber:
+        toner.tonerNumber,
+
+      percentage:
+        percentage,
+
+      amount:
+        remakeAmount
+    };
+
+  });
+
+};
 
   // ===================================================
   // RENDER
@@ -1611,7 +1692,13 @@ function Ink() {
           ← Back
         </button>
 
-
+        <img
+        style={{marginLeft:550, marginRight:-550,width:50}}
+     
+          src={logo}
+          className="App-logo"
+          alt="Payam"
+        />
         <h1
           style={{
             fontSize:
@@ -1895,7 +1982,7 @@ function Ink() {
                     >
 
                       <div>
-                        Delta E:
+                        ΔE:
                         {" "}
                         {record.beforeFlip?.deltaE || "-"}
                       </div>
@@ -2127,7 +2214,7 @@ function Ink() {
                         }}
                       >
 
-                        Delta E:
+                        ΔE:
                         {" "}
                         {record.afterFlip.deltaE || "-"}
 
@@ -2260,7 +2347,7 @@ function Ink() {
                       !record.afterFlip && (
 
                         <button
-  id="button"
+                          id="button"
                           onClick={() =>
                             loadRecord(
                               record
@@ -2288,7 +2375,7 @@ function Ink() {
                     {record.afterFlip && (
 
                       <button
-  id="button"
+                        id="button"
                         onClick={() =>
                           loadRecord(
                             record
@@ -2304,7 +2391,185 @@ function Ink() {
                     )}
 
                   </div>
+{/* ================================================= */}
+{/* REMAKE CALCULATOR */}
+{/* ================================================= */}
 
+<div
+  style={{
+    marginTop: "15px",
+    padding: "15px",
+    borderRadius: "8px",
+    background: "rgba(168,85,247,0.12)",
+    border: "1px solid rgba(168,85,247,0.25)"
+  }}
+>
+
+  <h3
+    style={{
+      margin: "0 0 12px",
+      fontSize: "15px"
+    }}
+  >
+    Remake This Ink
+  </h3>
+
+
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      flexWrap: "wrap"
+    }}
+  >
+
+    <label
+      style={{
+        fontSize: "12px",
+        fontWeight: "600"
+      }}
+    >
+      Target Weight (g)
+    </label>
+
+
+    <input
+      type="number"
+      min="0"
+      step="any"
+      placeholder="Enter weight"
+      value={
+        remakeWeights[record.id] || ""
+      }
+      onChange={(e) => {
+
+        setRemakeWeights({
+          ...remakeWeights,
+
+          [record.id]:
+            e.target.value
+        });
+
+      }}
+      style={{
+        width: "120px",
+        height: "32px",
+        padding: "5px 8px",
+        fontSize: "13px",
+        borderRadius: "6px",
+        border: "1px solid #64748b",
+        background: "#1e293b",
+        color: "white",
+        boxSizing: "border-box"
+      }}
+    />
+
+  </div>
+
+
+  {/* RESULTS */}
+
+  {remakeWeights[record.id] &&
+    calculateRemake(
+      record,
+      remakeWeights[record.id]
+    ).length > 0 && (
+
+      <div
+        style={{
+          marginTop: "15px"
+        }}
+      >
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit,minmax(150px,1fr))",
+            gap: "8px"
+          }}
+        >
+
+          {calculateRemake(
+            record,
+            remakeWeights[record.id]
+          ).map(
+            (toner, index) => (
+
+              <div
+                key={index}
+                style={{
+                  padding: "10px",
+                  background:
+                    "rgba(0,0,0,0.20)",
+                  borderRadius: "7px"
+                }}
+              >
+
+                <div
+                  style={{
+                    fontSize: "12px",
+                    opacity: "0.75"
+                  }}
+                >
+                  Toner #{toner.tonerNumber}
+                </div>
+
+
+                <div
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    marginTop: "4px"
+                  }}
+                >
+                  {toner.amount.toFixed(2)} g
+                </div>
+
+
+                <div
+                  style={{
+                    fontSize: "11px",
+                    opacity: "0.7",
+                    marginTop: "3px"
+                  }}
+                >
+                  {toner.percentage.toFixed(2)}%
+                </div>
+
+              </div>
+
+            )
+          )}
+
+        </div>
+
+
+        {/* TOTAL CHECK */}
+
+        <div
+          style={{
+            marginTop: "12px",
+            fontSize: "13px",
+            fontWeight: "bold"
+          }}
+        >
+
+          Target Total:
+          {" "}
+          {parseFloat(
+            remakeWeights[record.id]
+          ).toFixed(2)}
+          {" "}g
+
+        </div>
+
+      </div>
+
+    )}
+
+</div>
                 </div>
 
               );
@@ -2735,25 +3000,25 @@ function Ink() {
 
           {[
             [
-              "Delta E",
+              "ΔE",
               beforeDeltaE,
               setBeforeDeltaE
             ],
 
             [
-              "Delta L",
+              "Δl",
               beforeDeltaL,
               setBeforeDeltaL
             ],
 
             [
-              "Delta A",
+              "Δa",
               beforeDeltaA,
               setBeforeDeltaA
             ],
 
             [
-              "Delta B",
+              "Δb",
               beforeDeltaB,
               setBeforeDeltaB
             ]
@@ -2901,17 +3166,17 @@ function Ink() {
 
               {[
                 [
-                  "Target Delta L",
+                  "Target Δl",
                   flipDeltaL
                 ],
 
                 [
-                  "Target Delta A",
+                  "Target Δa",
                   flipDeltaA
                 ],
 
                 [
-                  "Target Delta B",
+                  "Target Δb",
                   flipDeltaB
                 ]
 
@@ -3326,25 +3591,25 @@ function Ink() {
 
               {[
                 [
-                  "Delta E",
+                  "ΔE",
                   afterDeltaE,
                   setAfterDeltaE
                 ],
 
                 [
-                  "Delta L",
+                  "Δl",
                   afterDeltaL,
                   setAfterDeltaL
                 ],
 
                 [
-                  "Delta A",
+                  "Δa",
                   afterDeltaA,
                   setAfterDeltaA
                 ],
 
                 [
-                  "Delta B",
+                  "Δb",
                   afterDeltaB,
                   setAfterDeltaB
                 ]

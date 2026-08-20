@@ -920,7 +920,7 @@ e.target.value
 
 
 <button
-style={{width:"100%"}}
+style={{width:"100%", maxWidth:500, marginLeft:400}}
 className="btn btn-primary mt-3"
 onClick={calculate}
 >
@@ -1007,7 +1007,7 @@ Final Weight:
   }}
 >
   <button
-  style={{width:"100%"}}
+  style={{width:"100%", maxWidth:500}}
     className="btn btn-success"
     onClick={() => window.print()}
   >

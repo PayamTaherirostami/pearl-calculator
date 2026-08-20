@@ -563,13 +563,13 @@ margin-top: -10px;
 }
 
 .App-logo {
-  width:50px;
-  height: 50px;
+  width:100px;
+  height: 100px;
   /* object-fit: contain; */
 }
 
 .footer-link {
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 600;
   text-decoration: none;
   color: #007bff;
