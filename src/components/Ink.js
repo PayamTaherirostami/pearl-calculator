@@ -1,36 +1,107 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from '../logo.svg';
+import logo from "../logo.svg";
 import { db } from "../firebase";
-import '../App2.css';
+import "../App2.css";
+
 import {
   collection,
   addDoc,
   getDocs,
-  query,
-  where,
   updateDoc,
   doc,
   serverTimestamp
 } from "firebase/firestore";
 
-
 // =====================================================
 // TONERS
 // =====================================================
 
-const TONERS = Array.from(
-  { length: 10 },
-  (_, index) => ({
-    number: index + 1,
-    image: `https://picsum.photos/seed/toner${index + 1}/100/100`
-  })
-);
-
+const TONERS = [
+  {
+    number: 4,
+    name: "Blue Shade Red",
+    image: "/images/4.PNG"
+  },
+  {
+    number: 5,
+    name: "Magenta",
+    image: "/images/5.PNG"
+  },
+  {
+    number: 6,
+    name: "Maroon",
+    image: "/images/6.PNG"
+  },
+  {
+    number: 18,
+    name: "Black",
+    image: "/images/18.PNG"
+  },
+  {
+    number: 7,
+    name: "Violet",
+    image: "/images/7.PNG"
+  },
+  {
+    number: 12,
+    name: "White",
+    image: "/images/12.PNG"
+  },
+  {
+    number: 8,
+    name: "Red Shade Blue",
+    image: "/images/8.PNG"
+  },
+  {
+    number: 9,
+    name: "Green Shade Blue",
+    image: "/images/9.PNG"
+  },
+  {
+    number: 10,
+    name: "Blue Shade Green",
+    image: "/images/10.PNG"
+  },
+  {
+    number: 22,
+    name: "Yellow Shade Green",
+    image: "/images/22.PNG"
+  },
+  {
+    number: 13,
+    name: "Iron Oxid Yellow",
+    image: "/images/13.PNG"
+  },
+  {
+    number: 23,
+    name: "Red Orange",
+    image: "/images/23.PNG"
+  },
+  {
+    number: 500,
+    name: "PEARL WHITE",
+    image: ""
+  },
+  {
+    number: 501,
+    name: "SUPER GOLD",
+    image: ""
+  },
+  {
+    number: 502,
+    name: "MICRO BRONZ",
+    image: ""
+  },
+  {
+    number: 503,
+    name: "CLEAR",
+    image: ""
+  }
+];
 
 // =====================================================
-// CREATE 10 EMPTY TRIALS
+// CREATE TRIALS
 // =====================================================
 
 const createTrials = () =>
@@ -41,7 +112,6 @@ const createTrials = () =>
     })
   );
 
-
 // =====================================================
 // CREATE TONER
 // =====================================================
@@ -51,7 +121,6 @@ const createToner = () => ({
   image: "",
   trials: createTrials()
 });
-
 
 // =====================================================
 // TONER TOTAL
@@ -66,8 +135,7 @@ const getTonerTotal = (toner) => {
   return toner.trials.reduce(
     (total, trial) => {
 
-      const value =
-        parseFloat(trial.amount);
+      const value = parseFloat(trial.amount);
 
       if (isNaN(value)) {
         return total;
@@ -80,12 +148,15 @@ const getTonerTotal = (toner) => {
   );
 };
 
-
 // =====================================================
 // ALL TONERS TOTAL
 // =====================================================
 
 const getAllTonerTotal = (toners) => {
+
+  if (!Array.isArray(toners)) {
+    return 0;
+  }
 
   return toners.reduce(
     (total, toner) =>
@@ -94,15 +165,11 @@ const getAllTonerTotal = (toners) => {
   );
 };
 
-
 // =====================================================
 // PERCENTAGE
 // =====================================================
 
-const getPercentage = (
-  value,
-  total
-) => {
+const getPercentage = (value, total) => {
 
   if (!total) {
     return "0.00";
@@ -113,7 +180,6 @@ const getPercentage = (
   ).toFixed(2);
 };
 
-
 // =====================================================
 // COMPONENT
 // =====================================================
@@ -121,7 +187,6 @@ const getPercentage = (
 function Ink() {
 
   const navigate = useNavigate();
-
 
   // ===================================================
   // BASIC INFORMATION
@@ -151,32 +216,31 @@ function Ink() {
   const [backing, setBacking] =
     useState("");
 
-const [remakeWeights, setRemakeWeights] =
-  useState({});
   // ===================================================
-  // BEFORE FLIP TONERS
+  // ORIGINAL MIX - ORIGINAL MIX
   // ===================================================
 
   const [beforeToners, setBeforeToners] =
     useState([]);
 
-
-  // ===================================================
-  // BEFORE COLOR CHECK
-  // ===================================================
-
   const [beforeDeltaE, setBeforeDeltaE] =
     useState("");
 
-  const [beforeDeltaL, setBeforeDeltaL] =
+  // ===================================================
+  // DAY 2 - COLOR CHECK BEFORE FLIP
+  // ===================================================
+
+  const [day2DeltaE, setDay2DeltaE] =
     useState("");
 
-  const [beforeDeltaA, setBeforeDeltaA] =
+  const [day2DeltaL, setDay2DeltaL] =
     useState("");
 
-  const [beforeDeltaB, setBeforeDeltaB] =
+  const [day2DeltaA, setDay2DeltaA] =
     useState("");
 
+  const [day2DeltaB, setDay2DeltaB] =
+    useState("");
 
   // ===================================================
   // FLIP
@@ -194,7 +258,6 @@ const [remakeWeights, setRemakeWeights] =
   const [flipDeltaB, setFlipDeltaB] =
     useState("");
 
-
   // ===================================================
   // FLIP TONERS
   // ===================================================
@@ -202,13 +265,10 @@ const [remakeWeights, setRemakeWeights] =
   const [flipToners, setFlipToners] =
     useState([]);
 
-
   // ===================================================
   // AFTER FLIP
+  // NO DE HERE
   // ===================================================
-
-  const [afterDeltaE, setAfterDeltaE] =
-    useState("");
 
   const [afterDeltaL, setAfterDeltaL] =
     useState("");
@@ -219,6 +279,12 @@ const [remakeWeights, setRemakeWeights] =
   const [afterDeltaB, setAfterDeltaB] =
     useState("");
 
+  // ===================================================
+  // STORAGE COUNT
+  // ===================================================
+
+  const [totalInks, setTotalInks] =
+    useState(0);
 
   // ===================================================
   // FIRESTORE DOCUMENT
@@ -226,7 +292,6 @@ const [remakeWeights, setRemakeWeights] =
 
   const [currentDocumentId, setCurrentDocumentId] =
     useState(null);
-
 
   // ===================================================
   // SEARCH
@@ -241,7 +306,6 @@ const [remakeWeights, setRemakeWeights] =
   const [searching, setSearching] =
     useState(false);
 
-
   // ===================================================
   // STATUS
   // ===================================================
@@ -252,12 +316,67 @@ const [remakeWeights, setRemakeWeights] =
   const [message, setMessage] =
     useState("");
 
+  // ===================================================
+  // REMAKE
+  // ===================================================
+
+  const [remakeWeights, setRemakeWeights] =
+    useState({});
+
+  // ===================================================
+  // COUNT STORAGE
+  // ===================================================
+
+  useEffect(() => {
+
+    countStorageInks();
+
+  }, []);
+
+  // ===================================================
+  // COUNT INKS
+  // ===================================================
+
+  const countStorageInks = async () => {
+
+    try {
+
+      const snapshot =
+        await getDocs(
+          collection(
+            db,
+            "inkRecords"
+          )
+        );
+
+      setTotalInks(
+        snapshot.size
+      );
+
+      console.log(
+        "📦 TOTAL INKS IN STORAGE:",
+        snapshot.size
+      );
+
+    } catch (error) {
+
+      console.error(
+        "🔴 COUNT ERROR:",
+        error
+      );
+
+    }
+  };
 
   // ===================================================
   // ADD BEFORE TONER
   // ===================================================
 
   const addBeforeToner = () => {
+
+    if (currentDocumentId) {
+      return;
+    }
 
     if (beforeToners.length >= 6) {
 
@@ -274,21 +393,28 @@ const [remakeWeights, setRemakeWeights] =
     ]);
   };
 
-
   // ===================================================
   // REMOVE BEFORE TONER
   // ===================================================
 
   const removeBeforeToner = (index) => {
 
+    if (currentDocumentId) {
+      return;
+    }
+
     const newToners =
       [...beforeToners];
 
-    newToners.splice(index, 1);
+    newToners.splice(
+      index,
+      1
+    );
 
-    setBeforeToners(newToners);
+    setBeforeToners(
+      newToners
+    );
   };
-
 
   // ===================================================
   // SELECT BEFORE TONER
@@ -298,6 +424,10 @@ const [remakeWeights, setRemakeWeights] =
     index,
     value
   ) => {
+
+    if (currentDocumentId) {
+      return;
+    }
 
     const selected =
       TONERS.find(
@@ -313,7 +443,8 @@ const [remakeWeights, setRemakeWeights] =
 
       ...newToners[index],
 
-      tonerNumber: value,
+      tonerNumber:
+        value,
 
       image:
         selected
@@ -327,7 +458,6 @@ const [remakeWeights, setRemakeWeights] =
     );
   };
 
-
   // ===================================================
   // CHANGE BEFORE TRIAL
   // ===================================================
@@ -337,6 +467,10 @@ const [remakeWeights, setRemakeWeights] =
     trialIndex,
     value
   ) => {
+
+    if (currentDocumentId) {
+      return;
+    }
 
     const newToners =
       [...beforeToners];
@@ -352,9 +486,8 @@ const [remakeWeights, setRemakeWeights] =
     );
   };
 
-
   // ===================================================
-  // CREATE FLIP TONERS
+  // CREATE FLIP TONERS FROM ORIGINAL MIX
   // ===================================================
 
   const createFlipTonersFromBefore =
@@ -376,12 +509,21 @@ const [remakeWeights, setRemakeWeights] =
       );
     };
 
-
   // ===================================================
   // FLIP
+  // USE DAY 2 DL / DA / DB
   // ===================================================
 
   const handleFlip = () => {
+
+    if (!currentDocumentId) {
+
+      alert(
+        "Please search and load an existing ink first."
+      );
+
+      return;
+    }
 
     console.log(
       "================================="
@@ -391,61 +533,31 @@ const [remakeWeights, setRemakeWeights] =
       "🔄 FLIP BUTTON CLICKED"
     );
 
-
     const L =
       parseFloat(
-        beforeDeltaL
+        day2DeltaL
       ) || 0;
 
     const A =
       parseFloat(
-        beforeDeltaA
+        day2DeltaA
       ) || 0;
 
     const B =
       parseFloat(
-        beforeDeltaB
+        day2DeltaB
       ) || 0;
 
+    // Reverse Day 2 values
 
-    // Reverse values
+    const targetL =
+      -L;
 
-    const targetL = -L;
-    const targetA = -A;
-    const targetB = -B;
+    const targetA =
+      -A;
 
-
-    // console.log(
-    //   "Original Delta L:",
-    //   L
-    // );
-
-    // console.log(
-    //   "Original Delta A:",
-    //   A
-    // );
-
-    // console.log(
-    //   "Original Delta B:",
-    //   B
-    // );
-
-
-    // console.log(
-    //   "Target Delta L:",
-    //   targetL
-    // );
-
-    // console.log(
-    //   "Target Delta A:",
-    //   targetA
-    // );
-
-    // console.log(
-    //   "Target Delta B:",
-    //   targetB
-    // );
-
+    const targetB =
+      -B;
 
     setFlipDeltaL(
       String(targetL)
@@ -459,9 +571,7 @@ const [remakeWeights, setRemakeWeights] =
       String(targetB)
     );
 
-
-    // IMPORTANT:
-    // BEFORE TONERS ARE NEVER CHANGED
+    // Keep ORIGINAL MIX unchanged
 
     if (!flipped) {
 
@@ -471,9 +581,7 @@ const [remakeWeights, setRemakeWeights] =
 
       setFlipped(true);
     }
-
   };
-
 
   // ===================================================
   // ADD FLIP TONER
@@ -496,25 +604,24 @@ const [remakeWeights, setRemakeWeights] =
     ]);
   };
 
-
   // ===================================================
   // REMOVE FLIP TONER
   // ===================================================
 
-  const removeFlipToner = (
-    index
-  ) => {
+  const removeFlipToner = (index) => {
 
     const newToners =
       [...flipToners];
 
-    newToners.splice(index, 1);
+    newToners.splice(
+      index,
+      1
+    );
 
     setFlipToners(
       newToners
     );
   };
-
 
   // ===================================================
   // SELECT FLIP TONER
@@ -539,7 +646,8 @@ const [remakeWeights, setRemakeWeights] =
 
       ...newToners[index],
 
-      tonerNumber: value,
+      tonerNumber:
+        value,
 
       image:
         selected
@@ -552,7 +660,6 @@ const [remakeWeights, setRemakeWeights] =
       newToners
     );
   };
-
 
   // ===================================================
   // CHANGE FLIP TRIAL
@@ -578,45 +685,6 @@ const [remakeWeights, setRemakeWeights] =
     );
   };
 
-
-  // ===================================================
-  // FINAL TONER TOTAL
-  // ===================================================
-
-  const getAfterTonerTotal = (
-    tonerNumber
-  ) => {
-
-    const before =
-      beforeToners.find(
-        toner =>
-          String(
-            toner.tonerNumber
-          ) ===
-          String(
-            tonerNumber
-          )
-      );
-
-    const flip =
-      flipToners.find(
-        toner =>
-          String(
-            toner.tonerNumber
-          ) ===
-          String(
-            tonerNumber
-          )
-      );
-
-
-    return (
-      getTonerTotal(before) +
-      getTonerTotal(flip)
-    );
-  };
-
-
   // ===================================================
   // FINAL TOTAL
   // ===================================================
@@ -633,9 +701,8 @@ const [remakeWeights, setRemakeWeights] =
     );
   };
 
-
   // ===================================================
-  // SAVE BEFORE FLIP
+  // SAVE ORIGINAL MIX
   // ===================================================
 
   const saveBeforeFlip = async () => {
@@ -645,9 +712,8 @@ const [remakeWeights, setRemakeWeights] =
     );
 
     console.log(
-      "💾 SAVE BEFORE FLIP"
+      "💾 SAVE ORIGINAL MIX"
     );
-
 
     if (!inkNumber.trim()) {
 
@@ -658,20 +724,22 @@ const [remakeWeights, setRemakeWeights] =
       return;
     }
 
-
     setSaving(true);
-    setMessage(
-      "Saving before-flip information..."
-    );
 
+    setMessage(
+      "Saving ORIGINAL MIX information..."
+    );
 
     const beforeTotal =
       getAllTonerTotal(
         beforeToners
       );
 
-
     const data = {
+
+      // =========================================
+      // BASIC INFORMATION
+      // =========================================
 
       inkNumber:
         inkNumber.trim(),
@@ -697,33 +765,26 @@ const [remakeWeights, setRemakeWeights] =
       backing:
         backing.trim(),
 
-
       status:
         "before_flip",
 
+      // =========================================
+      // ORIGINAL MIX
+      // ONLY ORIGINAL DE
+      // =========================================
 
       beforeFlip: {
 
         toners:
           beforeToners,
 
-        ΔE:
+        deltaE:
           beforeDeltaE,
-
-        Δl:
-          beforeDeltaL,
-
-        Δa:
-          beforeDeltaA,
-
-        Δb:
-          beforeDeltaB,
 
         totalInk:
           beforeTotal
 
       },
-
 
       createdAt:
         serverTimestamp(),
@@ -733,11 +794,6 @@ const [remakeWeights, setRemakeWeights] =
 
     };
 
-
-    console.log(
-      "DATA:",
-      data
-    );
 
 
     try {
@@ -751,14 +807,8 @@ const [remakeWeights, setRemakeWeights] =
           data
         );
 
-
-      setCurrentDocumentId(
-        docRef.id
-      );
-
-
       console.log(
-        "🟢 BEFORE FLIP SAVED"
+        "🟢 ORIGINAL MIX SAVED"
       );
 
       console.log(
@@ -766,15 +816,22 @@ const [remakeWeights, setRemakeWeights] =
         docRef.id
       );
 
-
       setMessage(
-        `Before flip saved successfully. ID: ${docRef.id}`
+        `Ink #${inkNumber} saved successfully.`
       );
+
+      // Count again
+
+      await countStorageInks();
+
+      // Clear form
+
+      clearInkForm();
 
     } catch (error) {
 
       console.error(
-        "🔴 SAVE ERROR:",
+        "🔴 ORIGINAL MIX SAVE ERROR:",
         error
       );
 
@@ -789,27 +846,30 @@ const [remakeWeights, setRemakeWeights] =
     }
   };
 
-
   // ===================================================
-  // LOAD RECORD INTO FORM
+  // LOAD RECORD
   // ===================================================
 
-  const loadRecord = (
-    record
-  ) => {
+  const loadRecord = (record) => {
 
     console.log(
       "📂 LOADING RECORD:",
       record
     );
-setRemakeWeights({
-  [record.id]: ""
-});
+
+    setRemakeWeights({
+      [record.id]:
+        ""
+    });
 
     setCurrentDocumentId(
       record.id
     );
 
+    // =========================================
+    // BASIC INFORMATION
+    // LOCKED AFTER LOADING
+    // =========================================
 
     setInkNumber(
       record.inkNumber || ""
@@ -843,56 +903,64 @@ setRemakeWeights({
       record.backing || ""
     );
 
-
-    // BEFORE
+    // =========================================
+    // ORIGINAL MIX TONERS
+    // =========================================
 
     setBeforeToners(
       record.beforeFlip?.toners || []
     );
 
+    // =========================================
+    // ORIGINAL MIX ORIGINAL DE
+    // =========================================
+
     setBeforeDeltaE(
       record.beforeFlip?.deltaE || ""
     );
 
-    setBeforeDeltaL(
-      record.beforeFlip?.deltaL || ""
+    // =========================================
+    // DAY 2 VALUES
+    // =========================================
+
+    setDay2DeltaE(
+      record.beforeFlip?.day2DeltaE || ""
     );
 
-    setBeforeDeltaA(
-      record.beforeFlip?.deltaA || ""
+    setDay2DeltaL(
+      record.beforeFlip?.day2DeltaL || ""
     );
 
-    setBeforeDeltaB(
-      record.beforeFlip?.deltaB || ""
+    setDay2DeltaA(
+      record.beforeFlip?.day2DeltaA || ""
     );
 
+    setDay2DeltaB(
+      record.beforeFlip?.day2DeltaB || ""
+    );
 
-    // FLIP
+    // =========================================
+    // EXISTING FLIP
+    // =========================================
 
-    if (
-      record.flip
-    ) {
+    if (record.flip) {
 
       setFlipped(true);
 
       setFlipDeltaL(
-        record.flip.targetDeltaL ||
-        ""
+        record.flip.targetDeltaL || ""
       );
 
       setFlipDeltaA(
-        record.flip.targetDeltaA ||
-        ""
+        record.flip.targetDeltaA || ""
       );
 
       setFlipDeltaB(
-        record.flip.targetDeltaB ||
-        ""
+        record.flip.targetDeltaB || ""
       );
 
       setFlipToners(
-        record.flip.toners ||
-        []
+        record.flip.toners || []
       );
 
     } else {
@@ -901,51 +969,44 @@ setRemakeWeights({
 
       setFlipToners([]);
 
+      setFlipDeltaL("");
+
+      setFlipDeltaA("");
+
+      setFlipDeltaB("");
     }
 
+    // =========================================
+    // AFTER FLIP
+    // NO DE
+    // =========================================
 
-    // AFTER
-
-    if (
-      record.afterFlip
-    ) {
-
-      setAfterDeltaE(
-        record.afterFlip.deltaE ||
-        ""
-      );
+    if (record.afterFlip) {
 
       setAfterDeltaL(
-        record.afterFlip.deltaL ||
-        ""
+        record.afterFlip.deltaL || ""
       );
 
       setAfterDeltaA(
-        record.afterFlip.deltaA ||
-        ""
+        record.afterFlip.deltaA || ""
       );
 
       setAfterDeltaB(
-        record.afterFlip.deltaB ||
-        ""
+        record.afterFlip.deltaB || ""
       );
 
     } else {
 
-      setAfterDeltaE("");
       setAfterDeltaL("");
-      setAfterDeltaA("");
-      setAfterDeltaB("");
 
+      setAfterDeltaA("");
+
+      setAfterDeltaB("");
     }
 
-
     setMessage(
-      `Ink #${record.inkNumber} loaded.`
+      `Ink #${record.inkNumber} loaded. ORIGINAL MIX information is locked.`
     );
-
-
-    // Scroll down
 
     setTimeout(() => {
 
@@ -955,9 +1016,86 @@ setRemakeWeights({
       });
 
     }, 100);
+  };
+
+  // ===================================================
+  // CLEAR FORM
+  // ===================================================
+
+  const clearInkForm = () => {
+
+    console.log(
+      "🧹 CLEARING INK FORM"
+    );
+
+    // Basic
+
+    setInkNumber("");
+    setBacNumber("");
+    setAirline("");
+    setTs("");
+    setTexture("");
+    setCap("");
+    setMaterial("");
+    setBacking("");
+
+    // ORIGINAL MIX
+
+    setBeforeToners([]);
+
+    setBeforeDeltaE("");
+
+    // Day 2
+
+    setDay2DeltaE("");
+    setDay2DeltaL("");
+    setDay2DeltaA("");
+    setDay2DeltaB("");
+
+    // Flip
+
+    setFlipped(false);
+
+    setFlipToners([]);
+
+    setFlipDeltaL("");
+    setFlipDeltaA("");
+    setFlipDeltaB("");
+
+    // After Flip
+
+    setAfterDeltaL("");
+    setAfterDeltaA("");
+    setAfterDeltaB("");
+
+    // Search
+
+    setSearchInk("");
+    setSearchResults([]);
+
+    // Document
+
+    setCurrentDocumentId(null);
+
 
   };
 
+  // ===================================================
+  // RESET TO ORIGINAL MIX
+  // ===================================================
+
+  const resetToDayOne = () => {
+
+
+
+    clearInkForm();
+
+    setMessage(
+      "Ready for a new ink. ORINGINAL MIX."
+    );
+
+
+  };
 
   // ===================================================
   // SEARCH INK
@@ -965,86 +1103,85 @@ setRemakeWeights({
 
   const searchForInk = async () => {
 
-    if (!searchInk.trim()) {
+    const searchValue =
+      searchInk.trim().toLowerCase();
+
+    if (!searchValue) {
 
       setSearchResults([]);
 
       return;
     }
 
-
     console.log(
       "================================="
     );
 
     console.log(
-      "🔎 SEARCHING:",
-      searchInk
+      "🔎 SEARCHING FOR:",
+      searchValue
     );
-
 
     setSearching(true);
 
-
     try {
 
-      const q =
-        query(
+      const snapshot =
+        await getDocs(
           collection(
             db,
             "inkRecords"
-          ),
-
-          where(
-            "inkNumber",
-            "==",
-            searchInk.trim()
           )
         );
 
-
-      const snapshot =
-        await getDocs(q);
-
-
       const results = [];
 
-
       snapshot.forEach(
-        document => {
+        (document) => {
 
-          results.push({
+          const data =
+            document.data();
 
-            id:
-              document.id,
+          const inkNumber =
+            String(
+              data.inkNumber || ""
+            ).toLowerCase();
 
-            ...document.data()
+          if (
+            inkNumber.includes(
+              searchValue
+            )
+          ) {
 
-          });
+            results.push({
 
+              id:
+                document.id,
+
+              ...data
+
+            });
+          }
         }
       );
-
-
-      console.log(
-        "🔎 SEARCH RESULTS:",
-        results
-      );
-
 
       setSearchResults(
         results
       );
-
 
       if (
         results.length === 0
       ) {
 
         setMessage(
-          "No ink found."
+          `No ink found containing "${searchInk.trim()}".`
         );
 
+      } else {
+
+        setMessage(
+          `${results.length} ink(s) found.`
+        );
       }
 
     } catch (error) {
@@ -1065,98 +1202,6 @@ setRemakeWeights({
     }
   };
 
-
-  // ===================================================
-  // OPEN RECORD AND FLIP
-  // ===================================================
-
-  const openAndFlip = (
-    record
-  ) => {
-
-    loadRecord(record);
-
-
-    setTimeout(() => {
-
-      // If the record already has
-      // flip data, don't overwrite it.
-
-      if (
-        record.flip
-      ) {
-
-        setFlipped(true);
-
-        return;
-      }
-
-
-      // Otherwise create new flip section.
-
-      const L =
-        parseFloat(
-          record.beforeFlip?.deltaL
-        ) || 0;
-
-      const A =
-        parseFloat(
-          record.beforeFlip?.deltaA
-        ) || 0;
-
-      const B =
-        parseFloat(
-          record.beforeFlip?.deltaB
-        ) || 0;
-
-
-      setFlipDeltaL(
-        String(-L)
-      );
-
-      setFlipDeltaA(
-        String(-A)
-      );
-
-      setFlipDeltaB(
-        String(-B)
-      );
-
-
-      setFlipToners(
-        (
-          record.beforeFlip?.toners ||
-          []
-        ).map(
-          toner => ({
-
-            tonerNumber:
-              toner.tonerNumber,
-
-            image:
-              toner.image,
-
-            trials:
-              createTrials()
-
-          })
-        )
-      );
-
-
-      setFlipped(true);
-
-
-      setMessage(
-        "Flip section opened."
-      );
-
-
-    }, 100);
-
-  };
-
-
   // ===================================================
   // SAVE AFTER FLIP
   // ===================================================
@@ -1171,10 +1216,7 @@ setRemakeWeights({
       "💾 SAVE AFTER FLIP"
     );
 
-
-    if (
-      !currentDocumentId
-    ) {
+    if (!currentDocumentId) {
 
       alert(
         "Please search and load an existing ink first."
@@ -1183,13 +1225,11 @@ setRemakeWeights({
       return;
     }
 
-
     setSaving(true);
 
     setMessage(
       "Saving after-flip information..."
     );
-
 
     const beforeTotal =
       getAllTonerTotal(
@@ -1205,10 +1245,9 @@ setRemakeWeights({
       beforeTotal +
       flipTotal;
 
-
-    // =================================================
-    // CREATE FINAL TONER SUMMARY
-    // =================================================
+    // =========================================
+    // TONER SUMMARY
+    // =========================================
 
     const tonerNumbers =
       Array.from(
@@ -1226,7 +1265,6 @@ setRemakeWeights({
 
         ])
       ).filter(Boolean);
-
 
     const afterTonerSummary =
       tonerNumbers.map(
@@ -1254,7 +1292,6 @@ setRemakeWeights({
                 )
             );
 
-
           const beforeAmount =
             getTonerTotal(
               before
@@ -1268,7 +1305,6 @@ setRemakeWeights({
           const afterAmount =
             beforeAmount +
             addedAmount;
-
 
           return {
 
@@ -1292,20 +1328,52 @@ setRemakeWeights({
               )
 
           };
-
         }
       );
 
-
-    // =================================================
-    // DATA TO UPDATE
-    // =================================================
+    // =========================================
+    // UPDATE DATA
+    // =========================================
 
     const updateData = {
 
       status:
         "after_flip",
 
+      // =========================================
+      // ORIGINAL MIX + DAY 2 COLOR CHECK
+      // =========================================
+
+      beforeFlip: {
+
+        toners:
+          beforeToners,
+
+        // Original ORIGINAL MIX DE
+        deltaE:
+          beforeDeltaE,
+
+        // New Day 2 values
+        day2DeltaE:
+          day2DeltaE,
+
+        day2DeltaL:
+          day2DeltaL,
+
+        day2DeltaA:
+          day2DeltaA,
+
+        day2DeltaB:
+          day2DeltaB,
+
+        totalInk:
+          beforeTotal
+
+      },
+
+      // =========================================
+      // FLIP
+      // =========================================
 
       flip: {
 
@@ -1329,19 +1397,20 @@ setRemakeWeights({
 
       },
 
+      // =========================================
+      // AFTER FLIP
+      // NO DE
+      // =========================================
 
       afterFlip: {
 
-        ΔE:
-          afterDeltaE,
-
-        Δl:
+        deltaL:
           afterDeltaL,
 
-        Δa:
+        deltaA:
           afterDeltaA,
 
-        Δb:
+        deltaB:
           afterDeltaB,
 
         toners:
@@ -1352,18 +1421,15 @@ setRemakeWeights({
 
       },
 
-
       updatedAt:
         serverTimestamp()
 
     };
 
-
     console.log(
       "UPDATE DATA:",
       updateData
     );
-
 
     try {
 
@@ -1376,22 +1442,17 @@ setRemakeWeights({
         updateData
       );
 
-
       console.log(
         "🟢 AFTER FLIP SAVED"
       );
 
+      await countStorageInks();
+
+      resetToDayOne();
 
       setMessage(
-        "After-flip information saved successfully."
+        "After-flip information saved successfully. Ready for ORIGINAL MIX."
       );
-
-
-      // Search again so results
-      // immediately show updated data.
-
-      await searchForInk();
-
 
     } catch (error) {
 
@@ -1411,10 +1472,125 @@ setRemakeWeights({
     }
   };
 
+  // ===================================================
+  // REMAKE CALCULATOR
+  // ===================================================
+
+  const calculateRemake = (
+    record,
+    targetWeight
+  ) => {
+
+    const target =
+      parseFloat(
+        targetWeight
+      );
+
+    if (
+      !target ||
+      target <= 0
+    ) {
+      return [];
+    }
+
+    // =========================================
+    // USE FINAL AFTER-FLIP SUMMARY
+    // =========================================
+
+    if (
+      record.afterFlip &&
+      record.afterFlip.toners &&
+      record.afterFlip.toners.length > 0
+    ) {
+
+      return record.afterFlip.toners.map(
+        (toner) => {
+
+          const percentage =
+            parseFloat(
+              toner.percentage
+            ) || 0;
+
+          const remakeAmount =
+            target *
+            (
+              percentage /
+              100
+            );
+
+          return {
+
+            tonerNumber:
+              toner.tonerNumber,
+
+            percentage:
+              percentage,
+
+            amount:
+              remakeAmount
+
+          };
+        }
+      );
+    }
+
+    // =========================================
+    // OTHERWISE ORIGINAL MIX
+    // =========================================
+
+    const toners =
+      record.beforeFlip?.toners ||
+      [];
+
+    const total =
+      parseFloat(
+        record.beforeFlip?.totalInk
+      ) || 0;
+
+    if (!total) {
+      return [];
+    }
+
+    return toners.map(
+      (toner) => {
+
+        const tonerAmount =
+          getTonerTotal(
+            toner
+          );
+
+        const percentage =
+          (
+            tonerAmount /
+            total
+          ) *
+          100;
+
+        const remakeAmount =
+          target *
+          (
+            percentage /
+            100
+          );
+
+        return {
+
+          tonerNumber:
+            toner.tonerNumber,
+
+          percentage:
+            percentage,
+
+          amount:
+            remakeAmount
+
+        };
+      }
+    );
+  };
 
   // ===================================================
   // STYLES
-  // CHANGE EACH VALUE AS NEEDED
   // ===================================================
 
   const pageStyle = {
@@ -1432,7 +1608,6 @@ setRemakeWeights({
       "white"
 
   };
-
 
   const cardStyle = {
 
@@ -1452,7 +1627,6 @@ setRemakeWeights({
       "18px"
 
   };
-
 
   const inputStyle = {
 
@@ -1485,11 +1659,10 @@ setRemakeWeights({
 
   };
 
-
   const smallInputStyle = {
 
     width:
-      "75px",
+      "150px",
 
     height:
       "30px",
@@ -1513,14 +1686,16 @@ setRemakeWeights({
       "white",
 
     boxSizing:
-      "border-box"
+      "border-box",
+
+    marginRight:
+      "30px"
 
   };
 
-
   const buttonStyle = {
 
- padding:
+    padding:
       "7px 12px",
 
     fontSize:
@@ -1536,7 +1711,6 @@ setRemakeWeights({
       "pointer"
 
   };
-
 
   const labelStyle = {
 
@@ -1554,7 +1728,6 @@ setRemakeWeights({
 
   };
 
-
   const gridStyle = {
 
     display:
@@ -1567,85 +1740,6 @@ setRemakeWeights({
       "12px"
 
   };
-// =====================================================
-// REMAKE CALCULATOR
-// =====================================================
-
-const calculateRemake = (record, targetWeight) => {
-
-  const target = parseFloat(targetWeight);
-
-  if (!target || target <= 0) {
-    return [];
-  }
-
-  // Use AFTER-FLIP toner summary if available
-  if (
-    record.afterFlip &&
-    record.afterFlip.toners &&
-    record.afterFlip.toners.length > 0
-  ) {
-
-    return record.afterFlip.toners.map((toner) => {
-
-      const percentage =
-        parseFloat(toner.percentage) || 0;
-
-      const remakeAmount =
-        target * (percentage / 100);
-
-      return {
-        tonerNumber: toner.tonerNumber,
-        percentage: percentage,
-        amount: remakeAmount
-      };
-
-    });
-
-  }
-
-
-  // Otherwise use BEFORE-FLIP toners
-
-  const toners =
-    record.beforeFlip?.toners || [];
-
-  const total =
-    parseFloat(
-      record.beforeFlip?.totalInk
-    ) || 0;
-
-
-  if (!total) {
-    return [];
-  }
-
-
-  return toners.map((toner) => {
-
-    const tonerAmount =
-      getTonerTotal(toner);
-
-    const percentage =
-      (tonerAmount / total) * 100;
-
-    const remakeAmount =
-      target * (percentage / 100);
-
-    return {
-      tonerNumber:
-        toner.tonerNumber,
-
-      percentage:
-        percentage,
-
-      amount:
-        remakeAmount
-    };
-
-  });
-
-};
 
   // ===================================================
   // RENDER
@@ -1654,7 +1748,6 @@ const calculateRemake = (record, targetWeight) => {
   return (
 
     <div style={pageStyle}>
-
 
       {/* ================================================= */}
       {/* HEADER */}
@@ -1683,35 +1776,37 @@ const calculateRemake = (record, targetWeight) => {
       >
 
         <button
-  id="button"
+          id="button"
           onClick={() =>
             navigate("/")
           }
-        //   style={buttonStyle}
         >
           ← Back
         </button>
 
         <img
-        style={{marginLeft:550, marginRight:-550,width:50}}
-     
           src={logo}
           className="App-logo"
           alt="Payam"
+          style={{
+            width:
+              "50px"
+          }}
         />
+
         <h1
           style={{
             fontSize:
               "24px",
 
-            marginLeft:
-              550,
-              marginRight:550
+            marginLeft:-380
           }}
         >
-          Ink Color Development
+          Ink Color Development - 
+          <strong style={{marginLeft:10}}>
+             {totalInks} inks in database
+          </strong>
         </h1>
-
 
         {/* SEARCH */}
 
@@ -1726,7 +1821,9 @@ const calculateRemake = (record, targetWeight) => {
         >
 
           <input
-            value={searchInk}
+            value={
+              searchInk
+            }
             onChange={(e) =>
               setSearchInk(
                 e.target.value
@@ -1735,11 +1832,11 @@ const calculateRemake = (record, targetWeight) => {
             onKeyDown={(e) => {
 
               if (
-                e.key === "Enter"
+                e.key ===
+                "Enter"
               ) {
 
                 searchForInk();
-
               }
 
             }}
@@ -1751,25 +1848,20 @@ const calculateRemake = (record, targetWeight) => {
             }}
           />
 
-
           <button
-  id="button"
+            id="button"
             onClick={
               searchForInk
             }
-            // style={buttonStyle}
           >
-
             {searching
               ? "Searching..."
               : "SEARCH"}
-
           </button>
 
         </div>
 
       </div>
-
 
       {/* ================================================= */}
       {/* MESSAGE */}
@@ -1800,7 +1892,6 @@ const calculateRemake = (record, targetWeight) => {
 
       )}
 
-
       {/* ================================================= */}
       {/* SEARCH RESULTS */}
       {/* ================================================= */}
@@ -1821,7 +1912,6 @@ const calculateRemake = (record, targetWeight) => {
             Search Results
           </h2>
 
-
           {searchResults.map(
             record => {
 
@@ -1835,9 +1925,10 @@ const calculateRemake = (record, targetWeight) => {
 
               const afterTotal =
                 record.afterFlip?.totalInk ||
-                beforeTotal +
-                flipTotal;
-
+                (
+                  beforeTotal +
+                  flipTotal
+                );
 
               return (
 
@@ -1902,17 +1993,24 @@ const calculateRemake = (record, targetWeight) => {
                             "4px"
                         }}
                       >
-                        BAC: {record.bacNumber}
+                        BAC:
+                        {" "}
+                        {record.bacNumber}
+
                         {" | "}
-                        Airline: {record.airline}
+
+                        Airline:
+                        {" "}
+                        {record.airline}
+
                         {" | "}
-                        Texture: {record.texture}
+
+                        Texture:
+                        {" "}
+                        {record.texture}
                       </div>
 
                     </div>
-
-
-                    {/* STATUS */}
 
                     <span
                       style={{
@@ -1942,8 +2040,9 @@ const calculateRemake = (record, targetWeight) => {
 
                   </div>
 
-
-                  {/* BEFORE */}
+                  {/* ================================================= */}
+                  {/* ORIGINAL MIX SUMMARY */}
+                  {/* ================================================= */}
 
                   <div
                     style={{
@@ -1970,9 +2069,8 @@ const calculateRemake = (record, targetWeight) => {
                           "15px"
                       }}
                     >
-                      BEFORE FLIP
+                       ORIGINAL MIX
                     </h3>
-
 
                     <div
                       style={{
@@ -1981,34 +2079,18 @@ const calculateRemake = (record, targetWeight) => {
                       }}
                     >
 
-                      <div>
-                        ΔE:
-                        {" "}
-                        {record.beforeFlip?.deltaE || "-"}
-                      </div>
+                      Original ΔE:
+                      {" "}
+                      {record.beforeFlip?.deltaE || "-"}
 
-                      <div>
-                        L:
-                        {" "}
-                        {record.beforeFlip?.deltaL || "-"}
-                        {" | "}
-                        A:
-                        {" "}
-                        {record.beforeFlip?.deltaA || "-"}
-                        {" | "}
-                        B:
-                        {" "}
-                        {record.beforeFlip?.deltaB || "-"}
-                      </div>
+                      <br />
 
-                      <div>
-                        Total:
-                        {" "}
-                        {beforeTotal} g
-                      </div>
+                      Total:
+                      {" "}
+                      {beforeTotal}
+                      {" "}g
 
                     </div>
-
 
                     {(record.beforeFlip?.toners || [])
                       .map(
@@ -2034,9 +2116,13 @@ const calculateRemake = (record, targetWeight) => {
 
                               Toner #
                               {toner.tonerNumber}
+
                               {" — "}
+
                               {total} g
+
                               {" — "}
+
                               {getPercentage(
                                 total,
                                 beforeTotal
@@ -2045,14 +2131,86 @@ const calculateRemake = (record, targetWeight) => {
                             </div>
 
                           );
-
                         }
                       )}
 
                   </div>
 
+                  {/* ================================================= */}
+                  {/* DAY 2 SUMMARY */}
+                  {/* ================================================= */}
 
-                  {/* FLIP */}
+                  {(record.beforeFlip?.day2DeltaE ||
+                    record.beforeFlip?.day2DeltaL ||
+                    record.beforeFlip?.day2DeltaA ||
+                    record.beforeFlip?.day2DeltaB) && (
+
+                    <div
+                      style={{
+                        marginTop:
+                          "12px",
+
+                        padding:
+                          "12px",
+
+                        borderRadius:
+                          "8px",
+
+                        background:
+                          "rgba(168,85,247,0.12)"
+                      }}
+                    >
+
+                      <h3
+                        style={{
+                          margin:
+                            "0 0 8px",
+
+                          fontSize:
+                            "15px"
+                        }}
+                      >
+                         COLOR CHECK/ FLIPING
+                      </h3>
+
+                      <div
+                        style={{
+                          fontSize:
+                            "12px"
+                        }}
+                      >
+
+                        DE:
+                        {" "}
+                        {record.beforeFlip?.day2DeltaE || "-"}
+
+                        {" | "}
+
+                        DL:
+                        {" "}
+                        {record.beforeFlip?.day2DeltaL || "-"}
+
+                        {" | "}
+
+                        DA:
+                        {" "}
+                        {record.beforeFlip?.day2DeltaA || "-"}
+
+                        {" | "}
+
+                        DB:
+                        {" "}
+                        {record.beforeFlip?.day2DeltaB || "-"}
+
+                      </div>
+
+                    </div>
+
+                  )}
+
+                  {/* ================================================= */}
+                  {/* FLIP SUMMARY */}
+                  {/* ================================================= */}
 
                   {record.flip && (
 
@@ -2084,7 +2242,6 @@ const calculateRemake = (record, targetWeight) => {
                         FLIP
                       </h3>
 
-
                       <div
                         style={{
                           fontSize:
@@ -2092,41 +2249,29 @@ const calculateRemake = (record, targetWeight) => {
                         }}
                       >
 
-                        Target L:
+                        Target DL:
                         {" "}
                         {record.flip.targetDeltaL}
 
                         {" | "}
 
-                        Target A:
+                        Target DA:
                         {" "}
                         {record.flip.targetDeltaA}
 
                         {" | "}
 
-                        Target B:
+                        Target DB:
                         {" "}
                         {record.flip.targetDeltaB}
 
-                      </div>
-
-
-                      <div
-                        style={{
-                          marginTop:
-                            "5px",
-
-                          fontSize:
-                            "12px"
-                        }}
-                      >
+                        <br />
 
                         Added:
                         {" "}
                         {flipTotal} g
 
                       </div>
-
 
                       {(record.flip.toners || [])
                         .map(
@@ -2154,9 +2299,11 @@ const calculateRemake = (record, targetWeight) => {
                                 {toner.tonerNumber}
 
                                 {" — +"}
+
                                 {total} g
 
                                 {" — "}
+
                                 {getPercentage(
                                   total,
                                   flipTotal
@@ -2165,7 +2312,6 @@ const calculateRemake = (record, targetWeight) => {
                               </div>
 
                             );
-
                           }
                         )}
 
@@ -2173,8 +2319,9 @@ const calculateRemake = (record, targetWeight) => {
 
                   )}
 
-
-                  {/* AFTER */}
+                  {/* ================================================= */}
+                  {/* AFTER FLIP */}
+                  {/* ================================================= */}
 
                   {record.afterFlip && (
 
@@ -2206,7 +2353,6 @@ const calculateRemake = (record, targetWeight) => {
                         AFTER FLIP
                       </h3>
 
-
                       <div
                         style={{
                           fontSize:
@@ -2214,25 +2360,19 @@ const calculateRemake = (record, targetWeight) => {
                         }}
                       >
 
-                        ΔE:
-                        {" "}
-                        {record.afterFlip.deltaE || "-"}
-
-                        <br />
-
-                        L:
+                        DL:
                         {" "}
                         {record.afterFlip.deltaL || "-"}
 
                         {" | "}
 
-                        A:
+                        DA:
                         {" "}
                         {record.afterFlip.deltaA || "-"}
 
                         {" | "}
 
-                        B:
+                        DB:
                         {" "}
                         {record.afterFlip.deltaB || "-"}
 
@@ -2243,7 +2383,6 @@ const calculateRemake = (record, targetWeight) => {
                         {afterTotal} g
 
                       </div>
-
 
                       {(record.afterFlip.toners || [])
                         .map(
@@ -2296,8 +2435,9 @@ const calculateRemake = (record, targetWeight) => {
 
                   )}
 
-
-                  {/* ACTION BUTTON */}
+                  {/* ================================================= */}
+                  {/* ACTION BUTTONS */}
+                  {/* ================================================= */}
 
                   <div
                     style={{
@@ -2318,9 +2458,9 @@ const calculateRemake = (record, targetWeight) => {
                     {!record.flip && (
 
                       <button
-  id="button"
+                        id="button"
                         onClick={() =>
-                          openAndFlip(
+                          loadRecord(
                             record
                           )
                         }
@@ -2337,11 +2477,10 @@ const calculateRemake = (record, targetWeight) => {
                             "bold"
                         }}
                       >
-                        FLIP
+                        START FLIPING
                       </button>
 
                     )}
-
 
                     {record.flip &&
                       !record.afterFlip && (
@@ -2371,7 +2510,6 @@ const calculateRemake = (record, targetWeight) => {
 
                       )}
 
-
                     {record.afterFlip && (
 
                       <button
@@ -2391,196 +2529,268 @@ const calculateRemake = (record, targetWeight) => {
                     )}
 
                   </div>
-{/* ================================================= */}
-{/* REMAKE CALCULATOR */}
-{/* ================================================= */}
 
-<div
-  style={{
-    marginTop: "15px",
-    padding: "15px",
-    borderRadius: "8px",
-    background: "rgba(168,85,247,0.12)",
-    border: "1px solid rgba(168,85,247,0.25)"
-  }}
->
+                  {/* ================================================= */}
+                  {/* REMAKE CALCULATOR */}
+                  {/* ================================================= */}
 
-  <h3
-    style={{
-      margin: "0 0 12px",
-      fontSize: "15px"
-    }}
-  >
-    Remake This Ink
-  </h3>
+                  <div
+                    style={{
+                      marginTop:
+                        "15px",
 
+                      padding:
+                        "15px",
 
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: "10px",
-      flexWrap: "wrap"
-    }}
-  >
+                      borderRadius:
+                        "8px",
 
-    <label
-      style={{
-        fontSize: "12px",
-        fontWeight: "600"
-      }}
-    >
-      Target Weight (g)
-    </label>
+                      background:
+                        "rgba(168,85,247,0.12)",
 
+                      border:
+                        "1px solid rgba(168,85,247,0.25)"
+                    }}
+                  >
 
-    <input
-      type="number"
-      min="0"
-      step="any"
-      placeholder="Enter weight"
-      value={
-        remakeWeights[record.id] || ""
-      }
-      onChange={(e) => {
+                    <h3
+                      style={{
+                        margin:
+                          "0 0 12px",
 
-        setRemakeWeights({
-          ...remakeWeights,
+                        fontSize:
+                          "15px"
+                      }}
+                    >
+                      Remake This Ink
+                    </h3>
 
-          [record.id]:
-            e.target.value
-        });
+                    <div
+                      style={{
+                        display:
+                          "flex",
 
-      }}
-      style={{
-        width: "120px",
-        height: "32px",
-        padding: "5px 8px",
-        fontSize: "13px",
-        borderRadius: "6px",
-        border: "1px solid #64748b",
-        background: "#1e293b",
-        color: "white",
-        boxSizing: "border-box"
-      }}
-    />
+                        alignItems:
+                          "center",
 
-  </div>
+                        gap:
+                          "10px",
 
+                        flexWrap:
+                          "wrap"
+                      }}
+                    >
 
-  {/* RESULTS */}
+                      <label
+                        style={{
+                          fontSize:
+                            "12px",
 
-  {remakeWeights[record.id] &&
-    calculateRemake(
-      record,
-      remakeWeights[record.id]
-    ).length > 0 && (
+                          fontWeight:
+                            "600"
+                        }}
+                      >
+                        Target Weight (g)
+                      </label>
 
-      <div
-        style={{
-          marginTop: "15px"
-        }}
-      >
+                      <input
+                        type="number"
+                        min="0"
+                        step="any"
+                        placeholder="Enter weight"
+                        value={
+                          remakeWeights[
+                            record.id
+                          ] || ""
+                        }
+                        onChange={(e) => {
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit,minmax(150px,1fr))",
-            gap: "8px"
-          }}
-        >
+                          setRemakeWeights({
+                            ...remakeWeights,
 
-          {calculateRemake(
-            record,
-            remakeWeights[record.id]
-          ).map(
-            (toner, index) => (
+                            [record.id]:
+                              e.target.value
+                          });
 
-              <div
-                key={index}
-                style={{
-                  padding: "10px",
-                  background:
-                    "rgba(0,0,0,0.20)",
-                  borderRadius: "7px"
-                }}
-              >
+                        }}
+                        style={{
+                          width:
+                            "120px",
 
-                <div
-                  style={{
-                    fontSize: "12px",
-                    opacity: "0.75"
-                  }}
-                >
-                  Toner #{toner.tonerNumber}
-                </div>
+                          height:
+                            "32px",
 
+                          padding:
+                            "5px 8px",
 
-                <div
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: "bold",
-                    marginTop: "4px"
-                  }}
-                >
-                  {toner.amount.toFixed(2)} g
-                </div>
+                          fontSize:
+                            "13px",
 
+                          borderRadius:
+                            "6px",
 
-                <div
-                  style={{
-                    fontSize: "11px",
-                    opacity: "0.7",
-                    marginTop: "3px"
-                  }}
-                >
-                  {toner.percentage.toFixed(2)}%
-                </div>
+                          border:
+                            "1px solid #64748b",
 
-              </div>
+                          background:
+                            "#1e293b",
 
-            )
-          )}
+                          color:
+                            "white",
 
-        </div>
+                          boxSizing:
+                            "border-box"
+                        }}
+                      />
 
+                    </div>
 
-        {/* TOTAL CHECK */}
+                    {remakeWeights[record.id] &&
+                      calculateRemake(
+                        record,
+                        remakeWeights[
+                          record.id
+                        ]
+                      ).length > 0 && (
 
-        <div
-          style={{
-            marginTop: "12px",
-            fontSize: "13px",
-            fontWeight: "bold"
-          }}
-        >
+                        <div
+                          style={{
+                            marginTop:
+                              "15px"
+                          }}
+                        >
 
-          Target Total:
-          {" "}
-          {parseFloat(
-            remakeWeights[record.id]
-          ).toFixed(2)}
-          {" "}g
+                          <div
+                            style={{
+                              display:
+                                "grid",
 
-        </div>
+                              gridTemplateColumns:
+                                "repeat(auto-fit,minmax(150px,1fr))",
 
-      </div>
+                              gap:
+                                "8px"
+                            }}
+                          >
 
-    )}
+                            {calculateRemake(
+                              record,
+                              remakeWeights[
+                                record.id
+                              ]
+                            ).map(
+                              (
+                                toner,
+                                index
+                              ) => (
 
-</div>
+                                <div
+                                  key={index}
+                                  style={{
+                                    padding:
+                                      "10px",
+
+                                    background:
+                                      "rgba(0,0,0,0.20)",
+
+                                    borderRadius:
+                                      "7px"
+                                  }}
+                                >
+
+                                  <div
+                                    style={{
+                                      fontSize:
+                                        "12px",
+
+                                      opacity:
+                                        "0.75"
+                                    }}
+                                  >
+                                    Toner #
+                                    {toner.tonerNumber}
+                                  </div>
+
+                                  <div
+                                    style={{
+                                      fontSize:
+                                        "18px",
+
+                                      fontWeight:
+                                        "bold",
+
+                                      marginTop:
+                                        "4px"
+                                    }}
+                                  >
+                                    {toner.amount.toFixed(2)}
+                                    {" "}g
+                                  </div>
+
+                                  <div
+                                    style={{
+                                      fontSize:
+                                        "11px",
+
+                                      opacity:
+                                        "0.7",
+
+                                      marginTop:
+                                        "3px"
+                                    }}
+                                  >
+                                    {toner.percentage.toFixed(2)}
+                                    %
+                                  </div>
+
+                                </div>
+
+                              )
+                            )}
+
+                          </div>
+
+                          <div
+                            style={{
+                              marginTop:
+                                "12px",
+
+                              fontSize:
+                                "13px",
+
+                              fontWeight:
+                                "bold"
+                            }}
+                          >
+
+                            Target Total:
+                            {" "}
+
+                            {parseFloat(
+                              remakeWeights[
+                                record.id
+                              ]
+                            ).toFixed(2)}
+
+                            {" "}g
+
+                          </div>
+
+                        </div>
+
+                      )}
+
+                  </div>
+
                 </div>
 
               );
-
             }
           )}
 
         </div>
 
       )}
-
 
       {/* ================================================= */}
       {/* BASIC INFORMATION */}
@@ -2600,6 +2810,34 @@ const calculateRemake = (record, targetWeight) => {
           Ink Information
         </h2>
 
+        {currentDocumentId && (
+
+          <div
+            style={{
+              marginBottom:
+                "15px",
+
+              padding:
+                "8px 12px",
+
+              background:
+                "rgba(245,158,11,0.15)",
+
+              border:
+                "1px solid rgba(245,158,11,0.35)",
+
+              borderRadius:
+                "6px",
+
+              fontSize:
+                "12px"
+            }}
+          >
+            🔒 ORIGINAL MIX information is locked.
+            You are working on the color check.
+          </div>
+
+        )}
 
         <div style={gridStyle}>
 
@@ -2662,13 +2900,25 @@ const calculateRemake = (record, targetWeight) => {
                 </label>
 
                 <input
-                  value={value}
+                  value={
+                    value
+                  }
                   onChange={(e) =>
                     setter(
                       e.target.value
                     )
                   }
-                  style={inputStyle}
+                  readOnly={
+                    !!currentDocumentId
+                  }
+                  style={{
+                    ...inputStyle,
+
+                    opacity:
+                      currentDocumentId
+                        ? 0.65
+                        : 1
+                  }}
                 />
 
               </div>
@@ -2680,9 +2930,8 @@ const calculateRemake = (record, targetWeight) => {
 
       </div>
 
-
       {/* ================================================= */}
-      {/* BEFORE TONERS */}
+      {/* BEFORE TONERS - ORIGINAL MIX */}
       {/* ================================================= */}
 
       <div style={cardStyle}>
@@ -2702,29 +2951,46 @@ const calculateRemake = (record, targetWeight) => {
 
           <h2
             style={{
-              marginRight:
-                1050,
-
               fontSize:
-                "18px"
+                "18px",
+
+              margin:
+                "0"
             }}
           >
             Before Flip — Toners
           </h2>
 
+          {!currentDocumentId && (
 
-          <button
-  id="button"
-            onClick={
-              addBeforeToner
-            }
-            // style={buttonStyle}
-          >
-            + Add Toner
-          </button>
+            <button
+              id="button"
+              onClick={
+                addBeforeToner
+              }
+            >
+              + Add Toner
+            </button>
+
+          )}
 
         </div>
 
+        {currentDocumentId && (
+
+          <p
+            style={{
+              fontSize:
+                "11px",
+
+              opacity:
+                "0.7"
+            }}
+          >
+            🔒 Original ORIGINAL MIX toners are locked.
+          </p>
+
+        )}
 
         {beforeToners.map(
           (toner, tonerIndex) => {
@@ -2738,7 +3004,6 @@ const calculateRemake = (record, targetWeight) => {
               getAllTonerTotal(
                 beforeToners
               );
-
 
             return (
 
@@ -2778,7 +3043,9 @@ const calculateRemake = (record, targetWeight) => {
                   {toner.image && (
 
                     <img
-                      src={toner.image}
+                      src={
+                        toner.image
+                      }
                       alt="Toner"
                       style={{
                         width:
@@ -2794,7 +3061,6 @@ const calculateRemake = (record, targetWeight) => {
 
                   )}
 
-
                   <select
                     value={
                       toner.tonerNumber
@@ -2805,9 +3071,17 @@ const calculateRemake = (record, targetWeight) => {
                         e.target.value
                       )
                     }
-                    style={
-                      smallInputStyle
+                    disabled={
+                      !!currentDocumentId
                     }
+                    style={{
+                      ...smallInputStyle,
+
+                      opacity:
+                        currentDocumentId
+                          ? 0.65
+                          : 1
+                    }}
                   >
 
                     <option value="">
@@ -2825,15 +3099,16 @@ const calculateRemake = (record, targetWeight) => {
                             tonerOption.number
                           }
                         >
-                          Toner{" "}
+                          #
                           {tonerOption.number}
+                          {" - "}
+                          {tonerOption.name}
                         </option>
 
                       )
                     )}
 
                   </select>
-
 
                   <span
                     style={{
@@ -2848,7 +3123,6 @@ const calculateRemake = (record, targetWeight) => {
                     </strong>
                   </span>
 
-
                   <span
                     style={{
                       fontSize:
@@ -2861,23 +3135,25 @@ const calculateRemake = (record, targetWeight) => {
                     )}%
                   </span>
 
+                  {!currentDocumentId && (
 
-                  <button
-  id="button"
-                    onClick={() =>
-                      removeBeforeToner(
-                        tonerIndex
-                      )
-                    }
-                    style={
-                      buttonStyle
-                    }
-                  >
-                    Remove
-                  </button>
+                    <button
+                      id="button"
+                      onClick={() =>
+                        removeBeforeToner(
+                          tonerIndex
+                        )
+                      }
+                      style={
+                        buttonStyle
+                      }
+                    >
+                      Remove
+                    </button>
+
+                  )}
 
                 </div>
-
 
                 {/* 10 TRIALS */}
 
@@ -2898,7 +3174,10 @@ const calculateRemake = (record, targetWeight) => {
                 >
 
                   {toner.trials.map(
-                    (trial, trialIndex) => (
+                    (
+                      trial,
+                      trialIndex
+                    ) => (
 
                       <div
                         key={
@@ -2915,7 +3194,8 @@ const calculateRemake = (record, targetWeight) => {
                               "block"
                           }}
                         >
-                          Try{" "}
+                          Try
+                          {" "}
                           {trialIndex + 1}
                         </label>
 
@@ -2932,9 +3212,17 @@ const calculateRemake = (record, targetWeight) => {
                               e.target.value
                             )
                           }
-                          style={
-                            smallInputStyle
+                          readOnly={
+                            !!currentDocumentId
                           }
+                          style={{
+                            ...smallInputStyle,
+
+                            opacity:
+                              currentDocumentId
+                                ? 0.65
+                                : 1
+                          }}
                         />
 
                       </div>
@@ -2947,10 +3235,8 @@ const calculateRemake = (record, targetWeight) => {
               </div>
 
             );
-
           }
         )}
-
 
         <div
           style={{
@@ -2976,9 +3262,8 @@ const calculateRemake = (record, targetWeight) => {
 
       </div>
 
-
       {/* ================================================= */}
-      {/* BEFORE COLOR CHECK */}
+      {/* COLOR CHECK */}
       {/* ================================================= */}
 
       <div style={cardStyle}>
@@ -2992,52 +3277,69 @@ const calculateRemake = (record, targetWeight) => {
               "18px"
           }}
         >
-          Before Flip — Color Check
-        </h2>
 
+          {currentDocumentId
+            ? "ACTUAL COLOR CHECK BEFORE FLIP"
+            : "ORIGINAL MIX — ORIGINAL MIX COLOR CHECK"}
+
+        </h2>
 
         <div style={gridStyle}>
 
-          {[
-            [
-              "ΔE",
-              beforeDeltaE,
-              setBeforeDeltaE
-            ],
+          {/* ========================================= */}
+          {/* ORIGINAL MIX */}
+          {/* ========================================= */}
 
-            [
-              "Δl",
-              beforeDeltaL,
-              setBeforeDeltaL
-            ],
+          {!currentDocumentId && (
 
-            [
-              "Δa",
-              beforeDeltaA,
-              setBeforeDeltaA
-            ],
+            <div>
 
-            [
-              "Δb",
-              beforeDeltaB,
-              setBeforeDeltaB
-            ]
+              <label style={labelStyle}>
+                Original ΔE
+              </label>
 
-          ].map(
-            ([label, value, setter]) => (
+              <input
+                type="number"
+                step="any"
+                value={
+                  beforeDeltaE
+                }
+                onChange={(e) =>
+                  setBeforeDeltaE(
+                    e.target.value
+                  )
+                }
+                style={
+                  inputStyle
+                }
+              />
 
-              <div key={label}>
+            </div>
+
+          )}
+
+          {/* ========================================= */}
+          {/* DAY 2 */}
+          {/* ========================================= */}
+
+          {currentDocumentId && (
+
+            <>
+
+              <div>
 
                 <label style={labelStyle}>
-                  {label}
+                  New ΔE
                 </label>
 
                 <input
                   type="number"
                   step="any"
-                  value={value}
+                  value={
+                    day2DeltaE
+                  }
                   onChange={(e) =>
-                    setter(
+                    setDay2DeltaE(
                       e.target.value
                     )
                   }
@@ -3048,47 +3350,127 @@ const calculateRemake = (record, targetWeight) => {
 
               </div>
 
-            )
+              <div>
+
+                <label style={labelStyle}>
+                  New ΔL
+                </label>
+
+                <input
+                  type="number"
+                  step="any"
+                  value={
+                    day2DeltaL
+                  }
+                  onChange={(e) =>
+                    setDay2DeltaL(
+                      e.target.value
+                    )
+                  }
+                  style={
+                    inputStyle
+                  }
+                />
+
+              </div>
+
+              <div>
+
+                <label style={labelStyle}>
+                  New ΔA
+                </label>
+
+                <input
+                  type="number"
+                  step="any"
+                  value={
+                    day2DeltaA
+                  }
+                  onChange={(e) =>
+                    setDay2DeltaA(
+                      e.target.value
+                    )
+                  }
+                  style={
+                    inputStyle
+                  }
+                />
+
+              </div>
+
+              <div>
+
+                <label style={labelStyle}>
+                  New ΔB
+                </label>
+
+                <input
+                  type="number"
+                  step="any"
+                  value={
+                    day2DeltaB
+                  }
+                  onChange={(e) =>
+                    setDay2DeltaB(
+                      e.target.value
+                    )
+                  }
+                  style={
+                    inputStyle
+                  }
+                />
+
+              </div>
+
+            </>
+
           )}
 
         </div>
 
+        {/* ========================================= */}
+        {/* FLIP */}
+        {/* ========================================= */}
 
-        <button
-  id="button"
-          onClick={
-            handleFlip
-          }
-          style={{
-            ...buttonStyle,
+        {currentDocumentId &&
+          !flipped && (
 
-            marginTop:
-              "18px",
+            <button
+              id="button"
+              onClick={
+                handleFlip
+              }
+              style={{
+                ...buttonStyle,
 
-            padding:
-              "10px 25px",
+                marginTop:
+                  "18px",
 
-            background:
-              "#f59e0b",
+                padding:
+                  "10px 25px",
 
-            color:
-              "black",
+                background:
+                  "#f59e0b",
 
-            fontWeight:
-              "bold"
-          }}
-        >
-          FLIP
-        </button>
+                color:
+                  "black",
+
+                fontWeight:
+                  "bold"
+              }}
+            >
+              FLIP
+            </button>
+
+          )}
 
       </div>
 
-
       {/* ================================================= */}
-      {/* SAVE BEFORE FLIP */}
+      {/* SAVE ORIGINAL MIX */}
       {/* ================================================= */}
 
-      {!flipped && (
+      {!currentDocumentId && (
 
         <div
           style={{
@@ -3101,7 +3483,7 @@ const calculateRemake = (record, targetWeight) => {
         >
 
           <button
-  id="button"
+            id="button"
             onClick={
               saveBeforeFlip
             }
@@ -3127,15 +3509,16 @@ const calculateRemake = (record, targetWeight) => {
                 "bold"
             }}
           >
+
             {saving
               ? "SAVING..."
               : "SAVE BEFORE FLIP"}
+
           </button>
 
         </div>
 
       )}
-
 
       {/* ================================================= */}
       {/* FLIP SECTION */}
@@ -3145,7 +3528,9 @@ const calculateRemake = (record, targetWeight) => {
 
         <>
 
+          {/* ================================================= */}
           {/* TARGET VALUES */}
+          {/* ================================================= */}
 
           <div style={cardStyle}>
 
@@ -3161,29 +3546,32 @@ const calculateRemake = (record, targetWeight) => {
               Flip — Target Values
             </h2>
 
-
             <div style={gridStyle}>
 
               {[
                 [
-                  "Target Δl",
+                  "Target ΔL",
                   flipDeltaL
                 ],
 
                 [
-                  "Target Δa",
+                  "Target ΔA",
                   flipDeltaA
                 ],
 
                 [
-                  "Target Δb",
+                  "Target ΔB",
                   flipDeltaB
                 ]
 
               ].map(
                 ([label, value]) => (
 
-                  <div key={label}>
+                  <div
+                    key={
+                      label
+                    }
+                  >
 
                     <label
                       style={
@@ -3194,7 +3582,9 @@ const calculateRemake = (record, targetWeight) => {
                     </label>
 
                     <input
-                      value={value}
+                      value={
+                        value
+                      }
                       readOnly
                       style={{
                         ...inputStyle,
@@ -3212,7 +3602,6 @@ const calculateRemake = (record, targetWeight) => {
             </div>
 
           </div>
-
 
           {/* ================================================= */}
           {/* FLIP TONERS */}
@@ -3245,9 +3634,8 @@ const calculateRemake = (record, targetWeight) => {
                 Flip — Toner Additions
               </h2>
 
-
               <button
-  id="button"
+                id="button"
                 onClick={
                   addFlipToner
                 }
@@ -3260,7 +3648,6 @@ const calculateRemake = (record, targetWeight) => {
 
             </div>
 
-
             <p
               style={{
                 fontSize:
@@ -3272,12 +3659,14 @@ const calculateRemake = (record, targetWeight) => {
             >
               Enter only the amount added during
               the flip. The original toner amounts
-              will never be changed.
+              are locked.
             </p>
 
-
             {flipToners.map(
-              (toner, tonerIndex) => {
+              (
+                toner,
+                tonerIndex
+              ) => {
 
                 const added =
                   getTonerTotal(
@@ -3309,11 +3698,12 @@ const calculateRemake = (record, targetWeight) => {
                   beforeAmount +
                   added;
 
-
                 return (
 
                   <div
-                    key={tonerIndex}
+                    key={
+                      tonerIndex
+                    }
                     style={{
                       marginTop:
                         "15px",
@@ -3366,7 +3756,6 @@ const calculateRemake = (record, targetWeight) => {
 
                       )}
 
-
                       <select
                         value={
                           toner.tonerNumber
@@ -3397,15 +3786,16 @@ const calculateRemake = (record, targetWeight) => {
                                 tonerOption.number
                               }
                             >
-                              Toner{" "}
+                              #
                               {tonerOption.number}
+                              {" - "}
+                              {tonerOption.name}
                             </option>
 
                           )
                         )}
 
                       </select>
-
 
                       <span
                         style={{
@@ -3419,7 +3809,6 @@ const calculateRemake = (record, targetWeight) => {
                           +{added} g
                         </strong>
                       </span>
-
 
                       <span
                         style={{
@@ -3435,7 +3824,6 @@ const calculateRemake = (record, targetWeight) => {
                         )}%
                       </span>
 
-
                       <span
                         style={{
                           fontSize:
@@ -3449,9 +3837,8 @@ const calculateRemake = (record, targetWeight) => {
                         </strong>
                       </span>
 
-
                       <button
-  id="button"
+                        id="button"
                         onClick={() =>
                           removeFlipToner(
                             tonerIndex
@@ -3466,8 +3853,7 @@ const calculateRemake = (record, targetWeight) => {
 
                     </div>
 
-
-                    {/* FLIP 10 TRIALS */}
+                    {/* FLIP TRIALS */}
 
                     <div
                       style={{
@@ -3506,7 +3892,8 @@ const calculateRemake = (record, targetWeight) => {
                                   "block"
                               }}
                             >
-                              Try{" "}
+                              Try
+                              {" "}
                               {trialIndex + 1}
                             </label>
 
@@ -3538,10 +3925,8 @@ const calculateRemake = (record, targetWeight) => {
                   </div>
 
                 );
-
               }
             )}
-
 
             <div
               style={{
@@ -3567,9 +3952,9 @@ const calculateRemake = (record, targetWeight) => {
 
           </div>
 
-
           {/* ================================================= */}
           {/* AFTER FLIP COLOR CHECK */}
+          {/* NO DE */}
           {/* ================================================= */}
 
           <div style={cardStyle}>
@@ -3586,30 +3971,23 @@ const calculateRemake = (record, targetWeight) => {
               After Flip — Actual Color Check
             </h2>
 
-
             <div style={gridStyle}>
 
               {[
                 [
-                  "ΔE",
-                  afterDeltaE,
-                  setAfterDeltaE
-                ],
-
-                [
-                  "Δl",
+                  "New ΔL",
                   afterDeltaL,
                   setAfterDeltaL
                 ],
 
                 [
-                  "Δa",
+                  "New ΔA",
                   afterDeltaA,
                   setAfterDeltaA
                 ],
 
                 [
-                  "Δb",
+                  "New ΔB",
                   afterDeltaB,
                   setAfterDeltaB
                 ]
@@ -3617,7 +3995,11 @@ const calculateRemake = (record, targetWeight) => {
               ].map(
                 ([label, value, setter]) => (
 
-                  <div key={label}>
+                  <div
+                    key={
+                      label
+                    }
+                  >
 
                     <label
                       style={
@@ -3630,7 +4012,9 @@ const calculateRemake = (record, targetWeight) => {
                     <input
                       type="number"
                       step="any"
-                      value={value}
+                      value={
+                        value
+                      }
                       onChange={(e) =>
                         setter(
                           e.target.value
@@ -3648,8 +4032,9 @@ const calculateRemake = (record, targetWeight) => {
 
             </div>
 
-
-            {/* FINAL SUMMARY */}
+            {/* ================================================= */}
+            {/* FINAL TONER SUMMARY */}
+            {/* ================================================= */}
 
             <div
               style={{
@@ -3666,7 +4051,6 @@ const calculateRemake = (record, targetWeight) => {
               >
                 Final Toner Summary
               </h3>
-
 
               {Array.from(
                 new Set([
@@ -3709,7 +4093,6 @@ const calculateRemake = (record, targetWeight) => {
                           )
                       );
 
-
                     const beforeAmount =
                       getTonerTotal(
                         before
@@ -3724,10 +4107,8 @@ const calculateRemake = (record, targetWeight) => {
                       beforeAmount +
                       addedAmount;
 
-
                     const finalTotal =
                       getAfterTotal();
-
 
                     return (
 
@@ -3788,12 +4169,10 @@ const calculateRemake = (record, targetWeight) => {
                       </div>
 
                     );
-
                   }
                 )}
 
             </div>
-
 
             <div
               style={{
@@ -3814,7 +4193,6 @@ const calculateRemake = (record, targetWeight) => {
 
           </div>
 
-
           {/* ================================================= */}
           {/* SAVE AFTER FLIP */}
           {/* ================================================= */}
@@ -3830,7 +4208,7 @@ const calculateRemake = (record, targetWeight) => {
           >
 
             <button
-  id="button"
+              id="button"
               onClick={
                 saveAfterFlip
               }
