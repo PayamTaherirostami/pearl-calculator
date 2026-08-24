@@ -954,13 +954,13 @@
         "Column1": "6478-REMAY-QTR"
     },
     {
-        "BAC": 6479,
+        "BAC": 6497,
         "Cart": 1,
         "Bin": "G11",
         "Airline": "AIN",
         "Texture": "LUXOR",
         "Cap": "MED",
-        "Column1": "6479-LUXOR-AIN"
+        "Column1": "6497-LUXOR-AIN"
     },
     {
         "BAC": 6488,
