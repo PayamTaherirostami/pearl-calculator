@@ -1,0 +1,275 @@
+.inventory-container {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+  background-color: #035a5a;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.inventory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.inventory-header h1 {
+  margin: 0 0 5px 0;
+  font-size: 26px;
+  color: #ddd;
+}
+
+.inventory-count {
+  font-size: 13px;
+  color: #88e4c5;
+}
+
+
+/* =====================================================
+   REFRESH
+===================================================== */
+
+.inventory-refresh {
+  max-width: 210px ;
+  height: 38px !important;
+
+  padding: 0 12px !important;
+
+  border: 1px solid #999;
+  border-radius: 6px;
+
+  background: rgb(90, 218, 201);
+  cursor: pointer;
+
+  font-size: 13px;
+}
+
+.inventory-refresh:hover {
+  background: #03a78b;
+}
+
+.inventory-refresh:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.inventory-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 15px;
+}
+
+.inventory-search {
+  width: 100%;
+  max-width: 600px;
+
+  height: 40px;
+
+  box-sizing: border-box;
+
+  padding: 0 12px;
+
+  border: 1px solid #aaa;
+  border-radius: 6px;
+
+  font-size: 14px;
+}
+
+.inventory-search:focus {
+  outline: none;
+  border-color: #555;
+}
+
+.clear-search {
+  height: 40px !important;
+
+  padding: 0 15px !important;
+
+  border: 1px solid #aaa;
+  border-radius: 6px;
+
+  background: white;
+  cursor: pointer;
+}
+
+.clear-search:hover {
+  background: #eee;
+}
+
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+.inventory-table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.inventory-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  min-width: 900px;
+
+  background: white;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.inventory-table thead th {
+  position: sticky;
+  top: 0;
+
+  background: #56e0ce;
+
+  padding: 12px 10px;
+
+  border-bottom: 2px solid #ccc;
+
+  text-align: left;
+
+  font-size: 13px;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  user-select: none;
+}
+
+.inventory-table thead th:hover {
+  background: #e7e7e7;
+}
+
+.inventory-table thead th span {
+  margin-left: 7px;
+
+  font-size: 12px;
+
+  color: #777;
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+.inventory-table tbody td {
+  padding: 11px 10px;
+
+  border-bottom: 1px solid #e5e5e5;
+
+  font-size: 13px;
+
+  white-space: nowrap;
+}
+
+.inventory-table tbody tr:hover {
+  background: #f8f8f8;
+}
+
+.inventory-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.ink-number-cell {
+  font-weight: 600;
+}
+
+
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.inventory-empty {
+  text-align: center !important;
+
+  padding: 40px !important;
+
+  color: #777;
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.inventory-loading {
+  padding: 40px;
+
+  text-align: center;
+
+  color: #666;
+
+  font-size: 14px;
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.inventory-error {
+  margin-bottom: 15px;
+
+  padding: 12px;
+
+  border-radius: 6px;
+
+  background: #ffe5e5;
+
+  color: #b00000;
+
+  font-size: 13px;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+  .inventory-container {
+    padding: 10px;
+  }
+
+  .inventory-header {
+    align-items: flex-start;
+
+    gap: 10px;
+  }
+
+  .inventory-header h1 {
+    font-size: 22px;
+  }
+
+  .inventory-refresh {
+    width: 90px !important;
+  }
+
+  .inventory-search {
+    max-width: none;
+  }
+
+}

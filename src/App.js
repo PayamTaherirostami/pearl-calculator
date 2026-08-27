@@ -11,6 +11,7 @@ import Calculator from './components/Calculator';
 import PercentageCalculator from './components/PercentageCalculator';
 import BACLookup from './components/BACLookup';
 import Ink from './components/Ink';
+import Inventory from './components/Inventory';
 
 
 function Home() {
@@ -69,10 +70,27 @@ function Home() {
         >
           Payam
         </a>
+                    <button
+              onClick={() => navigate("/inventory")}
+              style={{
+                maxWidth: "400px",
+                padding: "10px 15px",
+                // margin: "10px",
+                // marginLeft:"200px",
+                // marginRight:"400px",
+                borderRadius: "8px",
+                border: "none",
+                cursor: "pointer",
+                marginLeft:-70,
+                marginRight:60
+              }}
+            >
+              Inventory
+            </button>
             <button
               onClick={() => navigate("/ink")}
               style={{
-                maxWidth: "500px",
+                maxWidth: "400px",
                 padding: "10px 15px",
                 // margin: "10px",
                 // marginLeft:"200px",
@@ -109,6 +127,7 @@ function App() {
 
       {/* Ink page */}
       <Route path="/ink" element={<Ink />} />
+      <Route path="/inventory" element={<Inventory />} />
 
     </Routes>
   );

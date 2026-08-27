@@ -33,27 +33,18 @@ const TONERS = [
     name: "Maroon",
     image: "/images/6.PNG"
   },
-  {
-    number: 18,
-    name: "Black",
-    image: "/images/18.PNG"
-  },
+
   {
     number: 7,
     name: "Violet",
     image: "/images/7.PNG"
   },
-  {
-    number: 12,
-    name: "White",
-    image: "/images/12.PNG"
-  },
-  {
+    {
     number: 8,
     name: "Red Shade Blue",
     image: "/images/8.PNG"
   },
-  {
+    {
     number: 9,
     name: "Green Shade Blue",
     image: "/images/9.PNG"
@@ -64,15 +55,27 @@ const TONERS = [
     image: "/images/10.PNG"
   },
   {
-    number: 22,
-    name: "Yellow Shade Green",
-    image: "/images/22.PNG"
+    number: 12,
+    name: "White",
+    image: "/images/12.png"
   },
   {
     number: 13,
     name: "Iron Oxid Yellow",
     image: "/images/13.PNG"
   },
+
+    {
+    number: 18,
+    name: "Black",
+    image: "/images/18.PNG"
+  },
+  {
+    number: 22,
+    name: "Yellow Shade Green",
+    image: "/images/22.PNG"
+  },
+
   {
     number: 23,
     name: "Red Orange",
