@@ -33,18 +33,17 @@ const TONERS = [
     name: "Maroon",
     image: "/images/6.PNG"
   },
-
   {
     number: 7,
     name: "Violet",
     image: "/images/7.PNG"
   },
-    {
+  {
     number: 8,
     name: "Red Shade Blue",
     image: "/images/8.PNG"
   },
-    {
+  {
     number: 9,
     name: "Green Shade Blue",
     image: "/images/9.PNG"
@@ -64,8 +63,7 @@ const TONERS = [
     name: "Iron Oxid Yellow",
     image: "/images/13.PNG"
   },
-
-    {
+  {
     number: 18,
     name: "Black",
     image: "/images/18.PNG"
@@ -75,7 +73,6 @@ const TONERS = [
     name: "Yellow Shade Green",
     image: "/images/22.PNG"
   },
-
   {
     number: 23,
     name: "Red Orange",
@@ -83,12 +80,12 @@ const TONERS = [
   },
   {
     number: 500,
-    name: "PEARL WHITE",
+    name: "CLEAR",
     image: ""
   },
   {
     number: 501,
-    name: "SUPER GOLD",
+    name: "PEARL WHITE",
     image: ""
   },
   {
@@ -98,10 +95,87 @@ const TONERS = [
   },
   {
     number: 503,
-    name: "CLEAR",
+    name: "SUPER GOLD",
+    image: ""
+  },
+  {
+    number: 504,
+    name: "Brilliant Pale Gold",
+    image: ""
+  },
+  {
+    number: 505,
+    name: "French Rich Gold",
+    image: ""
+  },
+  {
+    number: 506,
+    name: "Brilliant Aluminum #7",
+    image: ""
+  },
+  {
+    number: 507,
+    name: "Mearlin Brilliant Gold",
+    image: ""
+  },
+  {
+    number: 508,
+    name: "Mearlin Super Green",
+    image: ""
+  },
+  {
+    number: 509,
+    name: "Mearlin Card Gold",
+    image: ""
+  },
+  {
+    number: 510,
+    name: "HI-LITE Super Green",
+    image: ""
+  },
+  {
+    number: 511,
+    name: "Lumina Red",
     image: ""
   }
 ];
+
+// =====================================================
+// NUMBER HELPERS
+// =====================================================
+
+const roundNumber = (
+  value,
+  decimals = 4
+) => {
+
+  const number =
+    Number(value);
+
+  if (!Number.isFinite(number)) {
+    return 0;
+  }
+
+  const factor =
+    Math.pow(10, decimals);
+
+  return (
+    Math.round(
+      (number + Number.EPSILON) *
+      factor
+    ) / factor
+  );
+};
+
+const safeNumber = (value) => {
+
+  const number =
+    parseFloat(value);
+
+  return Number.isFinite(number)
+    ? number
+    : 0;
+};
 
 // =====================================================
 // CREATE TRIALS
@@ -129,25 +203,47 @@ const createToner = () => ({
 // TONER TOTAL
 // =====================================================
 
-const getTonerTotal = (toner) => {
+const getTonerTotal = (
+  toner
+) => {
 
-  if (!toner || !toner.trials) {
+  if (
+    !toner ||
+    !Array.isArray(
+      toner.trials
+    )
+  ) {
     return 0;
   }
 
-  return toner.trials.reduce(
-    (total, trial) => {
+  return roundNumber(
+    toner.trials.reduce(
+      (
+        total,
+        trial
+      ) => {
 
-      const value = parseFloat(trial.amount);
+        const value =
+          parseFloat(
+            trial.amount
+          );
 
-      if (isNaN(value)) {
-        return total;
-      }
+        if (
+          !Number.isFinite(
+            value
+          )
+        ) {
+          return total;
+        }
 
-      return total + value;
-
-    },
-    0
+        return roundNumber(
+          total + value,
+          4
+        );
+      },
+      0
+    ),
+    4
   );
 };
 
@@ -155,16 +251,34 @@ const getTonerTotal = (toner) => {
 // ALL TONERS TOTAL
 // =====================================================
 
-const getAllTonerTotal = (toners) => {
+const getAllTonerTotal = (
+  toners
+) => {
 
-  if (!Array.isArray(toners)) {
+  if (
+    !Array.isArray(
+      toners
+    )
+  ) {
     return 0;
   }
 
-  return toners.reduce(
-    (total, toner) =>
-      total + getTonerTotal(toner),
-    0
+  return roundNumber(
+    toners.reduce(
+      (
+        total,
+        toner
+      ) =>
+        roundNumber(
+          total +
+          getTonerTotal(
+            toner
+          ),
+          4
+        ),
+      0
+    ),
+    4
   );
 };
 
@@ -172,14 +286,29 @@ const getAllTonerTotal = (toners) => {
 // PERCENTAGE
 // =====================================================
 
-const getPercentage = (value, total) => {
+const getPercentage = (
+  value,
+  total
+) => {
 
-  if (!total) {
+  const valueNumber =
+    safeNumber(value);
+
+  const totalNumber =
+    safeNumber(total);
+
+  if (
+    totalNumber === 0
+  ) {
     return "0.00";
   }
 
   return (
-    (value / total) * 100
+    (
+      valueNumber /
+      totalNumber
+    ) *
+    100
   ).toFixed(2);
 };
 
@@ -189,7 +318,8 @@ const getPercentage = (value, total) => {
 
 function Ink() {
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   // ===================================================
   // BASIC INFORMATION
@@ -220,7 +350,20 @@ function Ink() {
     useState("");
 
   // ===================================================
-  // ORIGINAL MIX - ORIGINAL MIX
+  // JOB / INVENTORY
+  // ===================================================
+
+  const [jobQnt, setJobQnt] =
+    useState("");
+
+  const [inStockWeight, setInStockWeight] =
+    useState("");
+
+  const [inkNote, setInkNote] =
+    useState("");
+
+  // ===================================================
+  // ORIGINAL MIX
   // ===================================================
 
   const [beforeToners, setBeforeToners] =
@@ -230,7 +373,7 @@ function Ink() {
     useState("");
 
   // ===================================================
-  // DAY 2 - COLOR CHECK BEFORE FLIP
+  // DAY 2
   // ===================================================
 
   const [day2DeltaE, setDay2DeltaE] =
@@ -270,7 +413,6 @@ function Ink() {
 
   // ===================================================
   // AFTER FLIP
-  // NO DE HERE
   // ===================================================
 
   const [afterDeltaL, setAfterDeltaL] =
@@ -308,6 +450,17 @@ function Ink() {
 
   const [searching, setSearching] =
     useState(false);
+
+  // ===================================================
+  // INVENTORY SEARCH EDITS
+  // Each result has its own values
+  // ===================================================
+
+  const [inventoryEdits, setInventoryEdits] =
+    useState({});
+
+  const [updatingInventory, setUpdatingInventory] =
+    useState(null);
 
   // ===================================================
   // STATUS
@@ -356,11 +509,6 @@ function Ink() {
         snapshot.size
       );
 
-      console.log(
-        "📦 TOTAL INKS IN STORAGE:",
-        snapshot.size
-      );
-
     } catch (error) {
 
       console.error(
@@ -377,11 +525,15 @@ function Ink() {
 
   const addBeforeToner = () => {
 
-    if (currentDocumentId) {
+    if (
+      currentDocumentId
+    ) {
       return;
     }
 
-    if (beforeToners.length >= 6) {
+    if (
+      beforeToners.length >= 6
+    ) {
 
       alert(
         "Maximum 6 toners allowed."
@@ -400,9 +552,13 @@ function Ink() {
   // REMOVE BEFORE TONER
   // ===================================================
 
-  const removeBeforeToner = (index) => {
+  const removeBeforeToner = (
+    index
+  ) => {
 
-    if (currentDocumentId) {
+    if (
+      currentDocumentId
+    ) {
       return;
     }
 
@@ -428,15 +584,21 @@ function Ink() {
     value
   ) => {
 
-    if (currentDocumentId) {
+    if (
+      currentDocumentId
+    ) {
       return;
     }
 
     const selected =
       TONERS.find(
         toner =>
-          String(toner.number) ===
-          String(value)
+          String(
+            toner.number
+          ) ===
+          String(
+            value
+          )
       );
 
     const newToners =
@@ -471,7 +633,9 @@ function Ink() {
     value
   ) => {
 
-    if (currentDocumentId) {
+    if (
+      currentDocumentId
+    ) {
       return;
     }
 
@@ -490,7 +654,7 @@ function Ink() {
   };
 
   // ===================================================
-  // CREATE FLIP TONERS FROM ORIGINAL MIX
+  // CREATE FLIP TONERS
   // ===================================================
 
   const createFlipTonersFromBefore =
@@ -514,12 +678,13 @@ function Ink() {
 
   // ===================================================
   // FLIP
-  // USE DAY 2 DL / DA / DB
   // ===================================================
 
   const handleFlip = () => {
 
-    if (!currentDocumentId) {
+    if (
+      !currentDocumentId
+    ) {
 
       alert(
         "Please search and load an existing ink first."
@@ -528,55 +693,60 @@ function Ink() {
       return;
     }
 
-    console.log(
-      "================================="
-    );
-
-    console.log(
-      "🔄 FLIP BUTTON CLICKED"
-    );
-
     const L =
-      parseFloat(
+      safeNumber(
         day2DeltaL
-      ) || 0;
+      );
 
     const A =
-      parseFloat(
+      safeNumber(
         day2DeltaA
-      ) || 0;
+      );
 
     const B =
-      parseFloat(
+      safeNumber(
         day2DeltaB
-      ) || 0;
-
-    // Reverse Day 2 values
+      );
 
     const targetL =
-      -L;
+      roundNumber(
+        -L,
+        4
+      );
 
     const targetA =
-      -A;
+      roundNumber(
+        -A,
+        4
+      );
 
     const targetB =
-      -B;
+      roundNumber(
+        -B,
+        4
+      );
 
     setFlipDeltaL(
-      String(targetL)
+      String(
+        targetL
+      )
     );
 
     setFlipDeltaA(
-      String(targetA)
+      String(
+        targetA
+      )
     );
 
     setFlipDeltaB(
-      String(targetB)
+      String(
+        targetB
+      )
     );
 
-    // Keep ORIGINAL MIX unchanged
-
-    if (!flipped) {
+    if (
+      !flipped
+    ) {
 
       setFlipToners(
         createFlipTonersFromBefore()
@@ -592,7 +762,9 @@ function Ink() {
 
   const addFlipToner = () => {
 
-    if (flipToners.length >= 6) {
+    if (
+      flipToners.length >= 6
+    ) {
 
       alert(
         "Maximum 6 toners allowed."
@@ -611,7 +783,9 @@ function Ink() {
   // REMOVE FLIP TONER
   // ===================================================
 
-  const removeFlipToner = (index) => {
+  const removeFlipToner = (
+    index
+  ) => {
 
     const newToners =
       [...flipToners];
@@ -638,8 +812,12 @@ function Ink() {
     const selected =
       TONERS.find(
         toner =>
-          String(toner.number) ===
-          String(value)
+          String(
+            toner.number
+          ) ===
+          String(
+            value
+          )
       );
 
     const newToners =
@@ -694,13 +872,14 @@ function Ink() {
 
   const getAfterTotal = () => {
 
-    return (
+    return roundNumber(
       getAllTonerTotal(
         beforeToners
       ) +
       getAllTonerTotal(
         flipToners
-      )
+      ),
+      4
     );
   };
 
@@ -710,15 +889,9 @@ function Ink() {
 
   const saveBeforeFlip = async () => {
 
-    console.log(
-      "================================="
-    );
-
-    console.log(
-      "💾 SAVE ORIGINAL MIX"
-    );
-
-    if (!inkNumber.trim()) {
+    if (
+      !inkNumber.trim()
+    ) {
 
       alert(
         "Please enter Ink #."
@@ -740,9 +913,7 @@ function Ink() {
 
     const data = {
 
-      // =========================================
-      // BASIC INFORMATION
-      // =========================================
+      // BASIC
 
       inkNumber:
         inkNumber.trim(),
@@ -768,13 +939,32 @@ function Ink() {
       backing:
         backing.trim(),
 
+      // JOB / INVENTORY
+
+      jobQnt:
+        jobQnt === ""
+          ? ""
+          : safeNumber(
+              jobQnt
+            ),
+
+      inStockWeight:
+        inStockWeight === ""
+          ? ""
+          : roundNumber(
+              safeNumber(
+                inStockWeight
+              ),
+              4
+            ),
+
+      note:
+        inkNote.trim(),
+
       status:
         "before_flip",
 
-      // =========================================
       // ORIGINAL MIX
-      // ONLY ORIGINAL DE
-      // =========================================
 
       beforeFlip: {
 
@@ -797,8 +987,6 @@ function Ink() {
 
     };
 
-
-
     try {
 
       const docRef =
@@ -811,11 +999,7 @@ function Ink() {
         );
 
       console.log(
-        "🟢 ORIGINAL MIX SAVED"
-      );
-
-      console.log(
-        "Document ID:",
+        "🟢 ORIGINAL MIX SAVED:",
         docRef.id
       );
 
@@ -823,11 +1007,7 @@ function Ink() {
         `Ink #${inkNumber} saved successfully.`
       );
 
-      // Count again
-
       await countStorageInks();
-
-      // Clear form
 
       clearInkForm();
 
@@ -850,15 +1030,196 @@ function Ink() {
   };
 
   // ===================================================
+  // UPDATE JOB / INVENTORY FROM SEARCH RESULT
+  // ===================================================
+
+  const updateInkInventory = async (
+    recordId
+  ) => {
+
+    if (!recordId) {
+      return;
+    }
+
+    const values =
+      inventoryEdits[
+        recordId
+      ] || {};
+
+    setUpdatingInventory(
+      recordId
+    );
+
+    try {
+
+      const newJobQnt =
+        values.jobQnt === undefined ||
+        values.jobQnt === ""
+          ? ""
+          : safeNumber(
+              values.jobQnt
+            );
+
+      const newStockWeight =
+        values.inStockWeight === undefined ||
+        values.inStockWeight === ""
+          ? ""
+          : roundNumber(
+              safeNumber(
+                values.inStockWeight
+              ),
+              4
+            );
+
+      const newNote =
+        values.note === undefined
+          ? ""
+          : values.note.trim();
+
+      await updateDoc(
+        doc(
+          db,
+          "inkRecords",
+          recordId
+        ),
+        {
+
+          jobQnt:
+            newJobQnt,
+
+          inStockWeight:
+            newStockWeight,
+
+          note:
+            newNote,
+
+          updatedAt:
+            serverTimestamp()
+
+        }
+      );
+
+      // Update search results immediately
+      setSearchResults(
+        previous =>
+          previous.map(
+            record => {
+
+              if (
+                record.id !==
+                recordId
+              ) {
+                return record;
+              }
+
+              return {
+
+                ...record,
+
+                jobQnt:
+                  newJobQnt,
+
+                inStockWeight:
+                  newStockWeight,
+
+                note:
+                  newNote
+
+              };
+            }
+          )
+      );
+
+      setInventoryEdits(
+        previous => ({
+
+          ...previous,
+
+          [recordId]: {
+
+            jobQnt:
+              newJobQnt === ""
+                ? ""
+                : String(
+                    newJobQnt
+                  ),
+
+            inStockWeight:
+              newStockWeight === ""
+                ? ""
+                : String(
+                    newStockWeight
+                  ),
+
+            note:
+              newNote
+
+          }
+
+        })
+      );
+
+      setMessage(
+        "Job Qnt, In Stock Weight and Note updated successfully."
+      );
+
+    } catch (error) {
+
+      console.error(
+        "🔴 INVENTORY UPDATE ERROR:",
+        error
+      );
+
+      setMessage(
+        "Error updating inventory: " +
+        error.message
+      );
+
+    } finally {
+
+      setUpdatingInventory(
+        null
+      );
+    }
+  };
+
+  // ===================================================
+  // UPDATE INVENTORY FIELD
+  // ===================================================
+
+  const changeInventoryField = (
+    recordId,
+    field,
+    value
+  ) => {
+
+    setInventoryEdits(
+      previous => ({
+
+        ...previous,
+
+        [recordId]: {
+
+          ...(previous[
+            recordId
+          ] || {}),
+
+          [field]:
+            value
+
+        }
+
+      })
+    );
+  };
+
+  // ===================================================
   // LOAD RECORD
   // ===================================================
 
-  const loadRecord = (record) => {
-
-    console.log(
-      "📂 LOADING RECORD:",
-      record
-    );
+  const loadRecord = (
+    record
+  ) => {
 
     setRemakeWeights({
       [record.id]:
@@ -869,10 +1230,7 @@ function Ink() {
       record.id
     );
 
-    // =========================================
-    // BASIC INFORMATION
-    // LOCKED AFTER LOADING
-    // =========================================
+    // BASIC
 
     setInkNumber(
       record.inkNumber || ""
@@ -906,104 +1264,134 @@ function Ink() {
       record.backing || ""
     );
 
-    // =========================================
-    // ORIGINAL MIX TONERS
-    // =========================================
+    // JOB / INVENTORY
+
+    setJobQnt(
+      record.jobQnt !== undefined &&
+      record.jobQnt !== null
+        ? String(
+            record.jobQnt
+          )
+        : ""
+    );
+
+    setInStockWeight(
+      record.inStockWeight !== undefined &&
+      record.inStockWeight !== null
+        ? String(
+            record.inStockWeight
+          )
+        : ""
+    );
+
+    setInkNote(
+      record.note || ""
+    );
+
+    // TONERS
 
     setBeforeToners(
-      record.beforeFlip?.toners || []
+      record.beforeFlip?.toners ||
+      []
     );
-
-    // =========================================
-    // ORIGINAL MIX ORIGINAL DE
-    // =========================================
 
     setBeforeDeltaE(
-      record.beforeFlip?.deltaE || ""
+      record.beforeFlip?.deltaE ||
+      ""
     );
 
-    // =========================================
-    // DAY 2 VALUES
-    // =========================================
+    // DAY 2
 
     setDay2DeltaE(
-      record.beforeFlip?.day2DeltaE || ""
+      record.beforeFlip?.day2DeltaE ||
+      ""
     );
 
     setDay2DeltaL(
-      record.beforeFlip?.day2DeltaL || ""
+      record.beforeFlip?.day2DeltaL ||
+      ""
     );
 
     setDay2DeltaA(
-      record.beforeFlip?.day2DeltaA || ""
+      record.beforeFlip?.day2DeltaA ||
+      ""
     );
 
     setDay2DeltaB(
-      record.beforeFlip?.day2DeltaB || ""
+      record.beforeFlip?.day2DeltaB ||
+      ""
     );
 
-    // =========================================
-    // EXISTING FLIP
-    // =========================================
+    // FLIP
 
-    if (record.flip) {
+    if (
+      record.flip
+    ) {
 
-      setFlipped(true);
+      setFlipped(
+        true
+      );
 
       setFlipDeltaL(
-        record.flip.targetDeltaL || ""
+        record.flip.targetDeltaL ||
+        ""
       );
 
       setFlipDeltaA(
-        record.flip.targetDeltaA || ""
+        record.flip.targetDeltaA ||
+        ""
       );
 
       setFlipDeltaB(
-        record.flip.targetDeltaB || ""
+        record.flip.targetDeltaB ||
+        ""
       );
 
       setFlipToners(
-        record.flip.toners || []
+        record.flip.toners ||
+        []
       );
 
     } else {
 
-      setFlipped(false);
+      setFlipped(
+        false
+      );
 
-      setFlipToners([]);
+      setFlipToners(
+        []
+      );
 
       setFlipDeltaL("");
-
       setFlipDeltaA("");
-
       setFlipDeltaB("");
     }
 
-    // =========================================
     // AFTER FLIP
-    // NO DE
-    // =========================================
 
-    if (record.afterFlip) {
+    if (
+      record.afterFlip
+    ) {
 
       setAfterDeltaL(
-        record.afterFlip.deltaL || ""
+        record.afterFlip.deltaL ||
+        ""
       );
 
       setAfterDeltaA(
-        record.afterFlip.deltaA || ""
+        record.afterFlip.deltaA ||
+        ""
       );
 
       setAfterDeltaB(
-        record.afterFlip.deltaB || ""
+        record.afterFlip.deltaB ||
+        ""
       );
 
     } else {
 
       setAfterDeltaL("");
-
       setAfterDeltaA("");
-
       setAfterDeltaB("");
     }
 
@@ -1027,12 +1415,6 @@ function Ink() {
 
   const clearInkForm = () => {
 
-    console.log(
-      "🧹 CLEARING INK FORM"
-    );
-
-    // Basic
-
     setInkNumber("");
     setBacNumber("");
     setAirline("");
@@ -1042,72 +1424,62 @@ function Ink() {
     setMaterial("");
     setBacking("");
 
-    // ORIGINAL MIX
+    setJobQnt("");
+    setInStockWeight("");
+    setInkNote("");
 
     setBeforeToners([]);
-
     setBeforeDeltaE("");
-
-    // Day 2
 
     setDay2DeltaE("");
     setDay2DeltaL("");
     setDay2DeltaA("");
     setDay2DeltaB("");
 
-    // Flip
-
     setFlipped(false);
 
     setFlipToners([]);
-
     setFlipDeltaL("");
     setFlipDeltaA("");
     setFlipDeltaB("");
-
-    // After Flip
 
     setAfterDeltaL("");
     setAfterDeltaA("");
     setAfterDeltaB("");
 
-    // Search
-
     setSearchInk("");
     setSearchResults([]);
 
-    // Document
+    setInventoryEdits({});
 
-    setCurrentDocumentId(null);
-
-
+    setCurrentDocumentId(
+      null
+    );
   };
 
   // ===================================================
-  // RESET TO ORIGINAL MIX
+  // RESET
   // ===================================================
 
   const resetToDayOne = () => {
 
-
-
     clearInkForm();
 
     setMessage(
-      "Ready for a new ink. ORINGINAL MIX."
+      "Ready for a new ink. ORIGINAL MIX."
     );
-
-
   };
 
   // ===================================================
-  // SEARCH INK
+  // SEARCH
   // ===================================================
 
   const searchForInk = async () => {
 
     const searchValue =
-      searchInk.trim().toLowerCase();
+      searchInk
+        .trim()
+        .toLowerCase();
 
     if (!searchValue) {
 
@@ -1116,16 +1488,9 @@ function Ink() {
       return;
     }
 
-    console.log(
-      "================================="
+    setSearching(
+      true
     );
-
-    console.log(
-      "🔎 SEARCHING FOR:",
-      searchValue
-    );
-
-    setSearching(true);
 
     try {
 
@@ -1140,14 +1505,15 @@ function Ink() {
       const results = [];
 
       snapshot.forEach(
-        (document) => {
+        document => {
 
           const data =
             document.data();
 
           const inkNumber =
             String(
-              data.inkNumber || ""
+              data.inkNumber ||
+              ""
             ).toLowerCase();
 
           if (
@@ -1170,6 +1536,46 @@ function Ink() {
 
       setSearchResults(
         results
+      );
+
+      // Initialize inventory fields
+      // independently for every result
+
+      const initialEdits = {};
+
+      results.forEach(
+        record => {
+
+          initialEdits[
+            record.id
+          ] = {
+
+            jobQnt:
+              record.jobQnt !== undefined &&
+              record.jobQnt !== null
+                ? String(
+                    record.jobQnt
+                  )
+                : "",
+
+            inStockWeight:
+              record.inStockWeight !== undefined &&
+              record.inStockWeight !== null
+                ? String(
+                    record.inStockWeight
+                  )
+                : "",
+
+            note:
+              record.note ||
+              ""
+
+          };
+        }
+      );
+
+      setInventoryEdits(
+        initialEdits
       );
 
       if (
@@ -1201,7 +1607,9 @@ function Ink() {
 
     } finally {
 
-      setSearching(false);
+      setSearching(
+        false
+      );
     }
   };
 
@@ -1211,15 +1619,9 @@ function Ink() {
 
   const saveAfterFlip = async () => {
 
-    console.log(
-      "================================="
-    );
-
-    console.log(
-      "💾 SAVE AFTER FLIP"
-    );
-
-    if (!currentDocumentId) {
+    if (
+      !currentDocumentId
+    ) {
 
       alert(
         "Please search and load an existing ink first."
@@ -1228,7 +1630,9 @@ function Ink() {
       return;
     }
 
-    setSaving(true);
+    setSaving(
+      true
+    );
 
     setMessage(
       "Saving after-flip information..."
@@ -1245,12 +1649,13 @@ function Ink() {
       );
 
     const afterTotal =
-      beforeTotal +
-      flipTotal;
+      roundNumber(
+        beforeTotal +
+        flipTotal,
+        4
+      );
 
-    // =========================================
     // TONER SUMMARY
-    // =========================================
 
     const tonerNumbers =
       Array.from(
@@ -1267,7 +1672,9 @@ function Ink() {
           )
 
         ])
-      ).filter(Boolean);
+      ).filter(
+        Boolean
+      );
 
     const afterTonerSummary =
       tonerNumbers.map(
@@ -1306,8 +1713,11 @@ function Ink() {
             );
 
           const afterAmount =
-            beforeAmount +
-            addedAmount;
+            roundNumber(
+              beforeAmount +
+              addedAmount,
+              4
+            );
 
           return {
 
@@ -1334,29 +1744,19 @@ function Ink() {
         }
       );
 
-    // =========================================
-    // UPDATE DATA
-    // =========================================
-
     const updateData = {
 
       status:
         "after_flip",
-
-      // =========================================
-      // ORIGINAL MIX + DAY 2 COLOR CHECK
-      // =========================================
 
       beforeFlip: {
 
         toners:
           beforeToners,
 
-        // Original ORIGINAL MIX DE
         deltaE:
           beforeDeltaE,
 
-        // New Day 2 values
         day2DeltaE:
           day2DeltaE,
 
@@ -1373,10 +1773,6 @@ function Ink() {
           beforeTotal
 
       },
-
-      // =========================================
-      // FLIP
-      // =========================================
 
       flip: {
 
@@ -1399,11 +1795,6 @@ function Ink() {
           flipTotal
 
       },
-
-      // =========================================
-      // AFTER FLIP
-      // NO DE
-      // =========================================
 
       afterFlip: {
 
@@ -1429,11 +1820,6 @@ function Ink() {
 
     };
 
-    console.log(
-      "UPDATE DATA:",
-      updateData
-    );
-
     try {
 
       await updateDoc(
@@ -1443,10 +1829,6 @@ function Ink() {
           currentDocumentId
         ),
         updateData
-      );
-
-      console.log(
-        "🟢 AFTER FLIP SAVED"
       );
 
       await countStorageInks();
@@ -1471,7 +1853,9 @@ function Ink() {
 
     } finally {
 
-      setSaving(false);
+      setSaving(
+        false
+      );
     }
   };
 
@@ -1485,40 +1869,65 @@ function Ink() {
   ) => {
 
     const target =
-      parseFloat(
+      safeNumber(
         targetWeight
       );
 
     if (
-      !target ||
       target <= 0
     ) {
       return [];
     }
 
     // =========================================
-    // USE FINAL AFTER-FLIP SUMMARY
+    // AFTER FLIP
     // =========================================
 
     if (
       record.afterFlip &&
-      record.afterFlip.toners &&
+      Array.isArray(
+        record.afterFlip.toners
+      ) &&
       record.afterFlip.toners.length > 0
     ) {
 
+      const total =
+        safeNumber(
+          record.afterFlip.totalInk
+        );
+
+      if (
+        total <= 0
+      ) {
+        return [];
+      }
+
       return record.afterFlip.toners.map(
-        (toner) => {
+        toner => {
+
+          const tonerAmount =
+            safeNumber(
+              toner.after
+            );
 
           const percentage =
-            parseFloat(
-              toner.percentage
-            ) || 0;
+            roundNumber(
+              (
+                tonerAmount /
+                total
+              ) *
+              100,
+              4
+            );
 
           const remakeAmount =
-            target *
-            (
-              percentage /
-              100
+            roundNumber(
+              target *
+              (
+                percentage /
+                100
+              ),
+              4
             );
 
           return {
@@ -1538,7 +1947,7 @@ function Ink() {
     }
 
     // =========================================
-    // OTHERWISE ORIGINAL MIX
+    // ORIGINAL MIX
     // =========================================
 
     const toners =
@@ -1546,16 +1955,18 @@ function Ink() {
       [];
 
     const total =
-      parseFloat(
+      safeNumber(
         record.beforeFlip?.totalInk
-      ) || 0;
+      );
 
-    if (!total) {
+    if (
+      total <= 0
+    ) {
       return [];
     }
 
     return toners.map(
-      (toner) => {
+      toner => {
 
         const tonerAmount =
           getTonerTotal(
@@ -1563,17 +1974,23 @@ function Ink() {
           );
 
         const percentage =
-          (
-            tonerAmount /
-            total
-          ) *
-          100;
+          roundNumber(
+            (
+              tonerAmount /
+              total
+            ) *
+            100,
+            4
+          );
 
         const remakeAmount =
-          target *
-          (
-            percentage /
-            100
+          roundNumber(
+            target *
+            (
+              percentage /
+              100
+            ),
+            4
           );
 
         return {
@@ -1750,7 +2167,11 @@ function Ink() {
 
   return (
 
-    <div style={pageStyle}>
+    <div
+      style={
+        pageStyle
+      }
+    >
 
       {/* ================================================= */}
       {/* HEADER */}
@@ -1802,12 +2223,21 @@ function Ink() {
             fontSize:
               "24px",
 
-            marginLeft:-380
+            marginLeft:
+              -380
           }}
         >
-          Ink Color Development - 
-          <strong style={{marginLeft:10}}>
-             {totalInks} inks in database
+          Ink Color Development -
+
+          <strong
+            style={{
+              marginLeft:
+                10
+            }}
+          >
+            {totalInks}
+            {" "}
+            inks in database
           </strong>
         </h1>
 
@@ -1840,6 +2270,7 @@ function Ink() {
               ) {
 
                 searchForInk();
+
               }
 
             }}
@@ -1901,7 +2332,11 @@ function Ink() {
 
       {searchResults.length > 0 && (
 
-        <div style={cardStyle}>
+        <div
+          style={
+            cardStyle
+          }
+        >
 
           <h2
             style={{
@@ -1919,24 +2354,58 @@ function Ink() {
             record => {
 
               const beforeTotal =
-                record.beforeFlip?.totalInk ||
-                0;
+                safeNumber(
+                  record.beforeFlip?.totalInk
+                );
 
               const flipTotal =
-                record.flip?.totalAdded ||
-                0;
+                safeNumber(
+                  record.flip?.totalAdded
+                );
 
               const afterTotal =
-                record.afterFlip?.totalInk ||
-                (
+                safeNumber(
+                  record.afterFlip?.totalInk
+                ) ||
+                roundNumber(
                   beforeTotal +
-                  flipTotal
+                  flipTotal,
+                  4
                 );
+
+              const inventory =
+                inventoryEdits[
+                  record.id
+                ] || {
+
+                  jobQnt:
+                    record.jobQnt !== undefined &&
+                    record.jobQnt !== null
+                      ? String(
+                          record.jobQnt
+                        )
+                      : "",
+
+                  inStockWeight:
+                    record.inStockWeight !== undefined &&
+                    record.inStockWeight !== null
+                      ? String(
+                          record.inStockWeight
+                        )
+                      : "",
+
+                  note:
+                    record.note ||
+                    ""
+
+                };
 
               return (
 
                 <div
-                  key={record.id}
+                  key={
+                    record.id
+                  }
                   style={{
                     padding:
                       "15px",
@@ -1981,7 +2450,8 @@ function Ink() {
                             "18px"
                         }}
                       >
-                        Ink #{record.inkNumber}
+                        Ink #
+                        {record.inkNumber}
                       </strong>
 
                       <div
@@ -2044,7 +2514,201 @@ function Ink() {
                   </div>
 
                   {/* ================================================= */}
-                  {/* ORIGINAL MIX SUMMARY */}
+                  {/* JOB / INVENTORY */}
+                  {/* ================================================= */}
+
+                  <div
+                    style={{
+                      marginTop:
+                        "12px",
+
+                      padding:
+                        "12px",
+
+                      borderRadius:
+                        "8px",
+
+                      background:
+                        "rgba(14,165,233,0.12)",
+
+                      border:
+                        "1px solid rgba(14,165,233,0.25)"
+                    }}
+                  >
+
+                    <h3
+                      style={{
+                        margin:
+                          "0 0 10px",
+
+                        fontSize:
+                          "15px"
+                      }}
+                    >
+                      JOB / INVENTORY
+                    </h3>
+
+                    <div
+                      style={{
+                        display:
+                          "flex",
+
+                        gap:
+                          "12px",
+
+                        flexWrap:
+                          "wrap",
+
+                        alignItems:
+                          "flex-end"
+                      }}
+                    >
+
+                      {/* JOB QNT */}
+
+                      <div>
+
+                        <label
+                          style={
+                            labelStyle
+                          }
+                        >
+                          Job Qnt
+                        </label>
+
+                        <input
+                          type="number"
+                          min="0"
+                          step="1"
+                          value={
+                            inventory.jobQnt
+                          }
+                          onChange={(e) =>
+                            changeInventoryField(
+                              record.id,
+                              "jobQnt",
+                              e.target.value
+                            )
+                          }
+                          style={
+                            inputStyle
+                          }
+                          placeholder="Job quantity"
+                        />
+
+                      </div>
+
+                      {/* STOCK */}
+
+                      <div>
+
+                        <label
+                          style={
+                            labelStyle
+                          }
+                        >
+                          In Stock Weight (g)
+                        </label>
+
+                        <input
+                          type="number"
+                          min="0"
+                          step="any"
+                          value={
+                            inventory.inStockWeight
+                          }
+                          onChange={(e) =>
+                            changeInventoryField(
+                              record.id,
+                              "inStockWeight",
+                              e.target.value
+                            )
+                          }
+                          style={
+                            inputStyle
+                          }
+                          placeholder="Stock weight"
+                        />
+
+                      </div>
+
+                      {/* NOTE */}
+
+                      <div>
+
+                        <label
+                          style={
+                            labelStyle
+                          }
+                        >
+                          Note
+                        </label>
+
+                        <input
+                          type="text"
+                          value={
+                            inventory.note
+                          }
+                          onChange={(e) =>
+                            changeInventoryField(
+                              record.id,
+                              "note",
+                              e.target.value
+                            )
+                          }
+                          style={{
+                            ...inputStyle,
+                            width:
+                              "280px"
+                          }}
+                          placeholder="Add note..."
+                        />
+
+                      </div>
+
+                      {/* UPDATE */}
+
+                      <button
+                        id="button"
+                        onClick={() =>
+                          updateInkInventory(
+                            record.id
+                          )
+                        }
+                        disabled={
+                          updatingInventory ===
+                          record.id
+                        }
+                        style={{
+                          ...buttonStyle,
+
+                          background:
+                            "#0ea5e9",
+
+                          color:
+                            "white",
+
+                          fontWeight:
+                            "bold",
+
+                          height:
+                            "32px"
+                        }}
+                      >
+
+                        {updatingInventory ===
+                        record.id
+                          ? "UPDATING..."
+                          : "UPDATE"}
+
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                  {/* ================================================= */}
+                  {/* ORIGINAL MIX */}
                   {/* ================================================= */}
 
                   <div
@@ -2072,7 +2736,7 @@ function Ink() {
                           "15px"
                       }}
                     >
-                       ORIGINAL MIX
+                      ORIGINAL MIX
                     </h3>
 
                     <div
@@ -2090,57 +2754,70 @@ function Ink() {
 
                       Total:
                       {" "}
-                      {beforeTotal}
+                      {roundNumber(
+                        beforeTotal,
+                        4
+                      )}
                       {" "}g
 
                     </div>
 
-                    {(record.beforeFlip?.toners || [])
-                      .map(
-                        (toner, index) => {
+                    {(
+                      record.beforeFlip?.toners ||
+                      []
+                    ).map(
+                      (
+                        toner,
+                        index
+                      ) => {
 
-                          const total =
-                            getTonerTotal(
-                              toner
-                            );
-
-                          return (
-
-                            <div
-                              key={index}
-                              style={{
-                                marginTop:
-                                  "6px",
-
-                                fontSize:
-                                  "12px"
-                              }}
-                            >
-
-                              Toner #
-                              {toner.tonerNumber}
-
-                              {" — "}
-
-                              {total} g
-
-                              {" — "}
-
-                              {getPercentage(
-                                total,
-                                beforeTotal
-                              )}%
-
-                            </div>
-
+                        const total =
+                          getTonerTotal(
+                            toner
                           );
-                        }
-                      )}
+
+                        return (
+
+                          <div
+                            key={
+                              index
+                            }
+                            style={{
+                              marginTop:
+                                "6px",
+
+                              fontSize:
+                                "12px"
+                            }}
+                          >
+
+                            Toner #
+                            {toner.tonerNumber}
+
+                            {" — "}
+
+                            {roundNumber(
+                              total,
+                              4
+                            )} g
+
+                            {" — "}
+
+                            {getPercentage(
+                              total,
+                              beforeTotal
+                            )}%
+
+                          </div>
+
+                        );
+                      }
+                    )}
 
                   </div>
 
                   {/* ================================================= */}
-                  {/* DAY 2 SUMMARY */}
+                  {/* DAY 2 */}
                   {/* ================================================= */}
 
                   {(record.beforeFlip?.day2DeltaE ||
@@ -2173,7 +2850,7 @@ function Ink() {
                             "15px"
                         }}
                       >
-                         COLOR CHECK/ FLIPING
+                        COLOR CHECK / FLIPPING
                       </h3>
 
                       <div
@@ -2212,7 +2889,7 @@ function Ink() {
                   )}
 
                   {/* ================================================= */}
-                  {/* FLIP SUMMARY */}
+                  {/* FLIP */}
                   {/* ================================================= */}
 
                   {record.flip && (
@@ -2272,51 +2949,64 @@ function Ink() {
 
                         Added:
                         {" "}
-                        {flipTotal} g
+                        {roundNumber(
+                          flipTotal,
+                          4
+                        )} g
 
                       </div>
 
-                      {(record.flip.toners || [])
-                        .map(
-                          (toner, index) => {
+                      {(
+                        record.flip.toners ||
+                        []
+                      ).map(
+                        (
+                          toner,
+                          index
+                        ) => {
 
-                            const total =
-                              getTonerTotal(
-                                toner
-                              );
-
-                            return (
-
-                              <div
-                                key={index}
-                                style={{
-                                  marginTop:
-                                    "6px",
-
-                                  fontSize:
-                                    "12px"
-                                }}
-                              >
-
-                                Toner #
-                                {toner.tonerNumber}
-
-                                {" — +"}
-
-                                {total} g
-
-                                {" — "}
-
-                                {getPercentage(
-                                  total,
-                                  flipTotal
-                                )}%
-
-                              </div>
-
+                          const total =
+                            getTonerTotal(
+                              toner
                             );
-                          }
-                        )}
+
+                          return (
+
+                            <div
+                              key={
+                                index
+                              }
+                              style={{
+                                marginTop:
+                                  "6px",
+
+                                fontSize:
+                                  "12px"
+                              }}
+                            >
+
+                              Toner #
+                              {toner.tonerNumber}
+
+                              {" — +"}
+
+                              {roundNumber(
+                                total,
+                                4
+                              )} g
+
+                              {" — "}
+
+                              {getPercentage(
+                                total,
+                                flipTotal
+                              )}%
+
+                            </div>
+
+                          );
+                        }
+                      )}
 
                     </div>
 
@@ -2383,56 +3073,77 @@ function Ink() {
 
                         Final Total:
                         {" "}
-                        {afterTotal} g
+                        {roundNumber(
+                          afterTotal,
+                          4
+                        )} g
 
                       </div>
 
-                      {(record.afterFlip.toners || [])
-                        .map(
-                          (toner, index) => (
+                      {(
+                        record.afterFlip.toners ||
+                        []
+                      ).map(
+                        (
+                          toner,
+                          index
+                        ) => (
 
-                            <div
-                              key={index}
-                              style={{
-                                marginTop:
-                                  "7px",
+                          <div
+                            key={
+                              index
+                            }
+                            style={{
+                              marginTop:
+                                "7px",
 
-                                fontSize:
-                                  "12px"
-                              }}
-                            >
+                              fontSize:
+                                "12px"
+                            }}
+                          >
 
-                              <strong>
-                                Toner #
-                                {toner.tonerNumber}
-                              </strong>
+                            <strong>
+                              Toner #
+                              {toner.tonerNumber}
+                            </strong>
 
-                              {" — "}
+                            {" — "}
 
-                              Before:
-                              {" "}
-                              {toner.before}g
+                            Before:
+                            {" "}
+                            {roundNumber(
+                              toner.before,
+                              4
+                            )}g
 
-                              {" | "}
+                            {" | "}
 
-                              Added:
-                              {" "}
-                              +{toner.added}g
+                            Added:
+                            {" "}
+                            +{roundNumber(
+                              toner.added,
+                              4
+                            )}g
 
-                              {" | "}
+                            {" | "}
 
-                              After:
-                              {" "}
-                              {toner.after}g
+                            After:
+                            {" "}
+                            {roundNumber(
+                              toner.after,
+                              4
+                            )}g
 
-                              {" | "}
+                            {" | "}
 
-                              {toner.percentage}%
+                            {Number(
+                              toner.percentage
+                            ).toFixed(2)}%
 
-                            </div>
+                          </div>
 
-                          )
-                        )}
+                        )
+                      )}
 
                     </div>
 
@@ -2648,7 +3359,9 @@ function Ink() {
 
                     </div>
 
-                    {remakeWeights[record.id] &&
+                    {remakeWeights[
+                      record.id
+                    ] &&
                       calculateRemake(
                         record,
                         remakeWeights[
@@ -2688,7 +3401,9 @@ function Ink() {
                               ) => (
 
                                 <div
-                                  key={index}
+                                  key={
+                                    index
+                                  }
                                   style={{
                                     padding:
                                       "10px",
@@ -2726,7 +3441,10 @@ function Ink() {
                                         "4px"
                                     }}
                                   >
-                                    {toner.amount.toFixed(2)}
+                                    {roundNumber(
+                                      toner.amount,
+                                      4
+                                    ).toFixed(2)}
                                     {" "}g
                                   </div>
 
@@ -2742,7 +3460,9 @@ function Ink() {
                                         "3px"
                                     }}
                                   >
-                                    {toner.percentage.toFixed(2)}
+                                    {Number(
+                                      toner.percentage
+                                    ).toFixed(2)}
                                     %
                                   </div>
 
@@ -2769,7 +3489,7 @@ function Ink() {
                             Target Total:
                             {" "}
 
-                            {parseFloat(
+                            {safeNumber(
                               remakeWeights[
                                 record.id
                               ]
@@ -2799,7 +3519,11 @@ function Ink() {
       {/* BASIC INFORMATION */}
       {/* ================================================= */}
 
-      <div style={cardStyle}>
+      <div
+        style={
+          cardStyle
+        }
+      >
 
         <h2
           style={{
@@ -2842,7 +3566,11 @@ function Ink() {
 
         )}
 
-        <div style={gridStyle}>
+        <div
+          style={
+            gridStyle
+          }
+        >
 
           {[
             [
@@ -2894,11 +3622,25 @@ function Ink() {
             ]
 
           ].map(
-            ([label, value, setter]) => (
+            (
+              [
+                label,
+                value,
+                setter
+              ]
+            ) => (
 
-              <div key={label}>
+              <div
+                key={
+                  label
+                }
+              >
 
-                <label style={labelStyle}>
+                <label
+                  style={
+                    labelStyle
+                  }
+                >
                   {label}
                 </label>
 
@@ -2931,13 +3673,161 @@ function Ink() {
 
         </div>
 
+        {/* ================================================= */}
+        {/* JOB / INVENTORY FOR NEW INK */}
+        {/* ================================================= */}
+
+        {!currentDocumentId && (
+
+          <div
+            style={{
+              marginTop:
+                "18px",
+
+              padding:
+                "14px",
+
+              borderRadius:
+                "8px",
+
+              background:
+                "rgba(14,165,233,0.10)",
+
+              border:
+                "1px solid rgba(14,165,233,0.25)"
+            }}
+          >
+
+            <h3
+              style={{
+                margin:
+                  "0 0 12px",
+
+                fontSize:
+                  "15px"
+              }}
+            >
+              JOB / INVENTORY
+            </h3>
+
+            <div
+              style={
+                gridStyle
+              }
+            >
+
+              <div>
+
+                <label
+                  style={
+                    labelStyle
+                  }
+                >
+                  Job Qnt
+                </label>
+
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={
+                    jobQnt
+                  }
+                  onChange={(e) =>
+                    setJobQnt(
+                      e.target.value
+                    )
+                  }
+                  style={
+                    inputStyle
+                  }
+                  placeholder="Job quantity"
+                />
+
+              </div>
+
+              <div>
+
+                <label
+                  style={
+                    labelStyle
+                  }
+                >
+                  In Stock Weight (g)
+                </label>
+
+                <input
+                  type="number"
+                  min="0"
+                  step="any"
+                  value={
+                    inStockWeight
+                  }
+                  onChange={(e) =>
+                    setInStockWeight(
+                      e.target.value
+                    )
+                  }
+                  style={
+                    inputStyle
+                  }
+                  placeholder="Stock weight"
+                />
+
+              </div>
+
+              <div
+                style={{
+                  gridColumn:
+                    "span 2"
+                }}
+              >
+
+                <label
+                  style={
+                    labelStyle
+                  }
+                >
+                  Note
+                </label>
+
+                <input
+                  type="text"
+                  value={
+                    inkNote
+                  }
+                  onChange={(e) =>
+                    setInkNote(
+                      e.target.value
+                    )
+                  }
+                  style={{
+                    ...inputStyle,
+                    width:
+                      "100%"
+                  }}
+                  placeholder="Add note..."
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+        )}
+
       </div>
 
       {/* ================================================= */}
-      {/* BEFORE TONERS - ORIGINAL MIX */}
+      {/* BEFORE TONERS */}
       {/* ================================================= */}
 
-      <div style={cardStyle}>
+      <div
+        style={
+          cardStyle
+        }
+      >
 
         <div
           style={{
@@ -2996,7 +3886,10 @@ function Ink() {
         )}
 
         {beforeToners.map(
-          (toner, tonerIndex) => {
+          (
+            toner,
+            tonerIndex
+          ) => {
 
             const total =
               getTonerTotal(
@@ -3011,7 +3904,9 @@ function Ink() {
             return (
 
               <div
-                key={tonerIndex}
+                key={
+                  tonerIndex
+                }
                 style={{
                   marginTop:
                     "15px",
@@ -3122,7 +4017,10 @@ function Ink() {
                     Total:
                     {" "}
                     <strong>
-                      {total} g
+                      {roundNumber(
+                        total,
+                        4
+                      )} g
                     </strong>
                   </span>
 
@@ -3157,8 +4055,6 @@ function Ink() {
                   )}
 
                 </div>
-
-                {/* 10 TRIALS */}
 
                 <div
                   style={{
@@ -3256,8 +4152,11 @@ function Ink() {
 
           Before Flip Total:
           {" "}
-          {getAllTonerTotal(
-            beforeToners
+          {roundNumber(
+            getAllTonerTotal(
+              beforeToners
+            ),
+            4
           )}
           {" "}g
 
@@ -3269,7 +4168,11 @@ function Ink() {
       {/* COLOR CHECK */}
       {/* ================================================= */}
 
-      <div style={cardStyle}>
+      <div
+        style={
+          cardStyle
+        }
+      >
 
         <h2
           style={{
@@ -3287,17 +4190,21 @@ function Ink() {
 
         </h2>
 
-        <div style={gridStyle}>
-
-          {/* ========================================= */}
-          {/* ORIGINAL MIX */}
-          {/* ========================================= */}
+        <div
+          style={
+            gridStyle
+          }
+        >
 
           {!currentDocumentId && (
 
             <div>
 
-              <label style={labelStyle}>
+              <label
+                style={
+                  labelStyle
+                }
+              >
                 Original ΔE
               </label>
 
@@ -3321,17 +4228,17 @@ function Ink() {
 
           )}
 
-          {/* ========================================= */}
-          {/* DAY 2 */}
-          {/* ========================================= */}
-
           {currentDocumentId && (
 
             <>
 
               <div>
 
-                <label style={labelStyle}>
+                <label
+                  style={
+                    labelStyle
+                  }
+                >
                   New ΔE
                 </label>
 
@@ -3355,7 +4262,11 @@ function Ink() {
 
               <div>
 
-                <label style={labelStyle}>
+                <label
+                  style={
+                    labelStyle
+                  }
+                >
                   New ΔL
                 </label>
 
@@ -3379,7 +4290,11 @@ function Ink() {
 
               <div>
 
-                <label style={labelStyle}>
+                <label
+                  style={
+                    labelStyle
+                  }
+                >
                   New ΔA
                 </label>
 
@@ -3403,7 +4318,11 @@ function Ink() {
 
               <div>
 
-                <label style={labelStyle}>
+                <label
+                  style={
+                    labelStyle
+                  }
+                >
                   New ΔB
                 </label>
 
@@ -3430,10 +4349,6 @@ function Ink() {
           )}
 
         </div>
-
-        {/* ========================================= */}
-        {/* FLIP */}
-        {/* ========================================= */}
 
         {currentDocumentId &&
           !flipped && (
@@ -3470,7 +4385,7 @@ function Ink() {
       </div>
 
       {/* ================================================= */}
-      {/* SAVE ORIGINAL MIX */}
+      {/* SAVE ORIGINAL */}
       {/* ================================================= */}
 
       {!currentDocumentId && (
@@ -3531,11 +4446,13 @@ function Ink() {
 
         <>
 
-          {/* ================================================= */}
           {/* TARGET VALUES */}
-          {/* ================================================= */}
 
-          <div style={cardStyle}>
+          <div
+            style={
+              cardStyle
+            }
+          >
 
             <h2
               style={{
@@ -3549,7 +4466,11 @@ function Ink() {
               Flip — Target Values
             </h2>
 
-            <div style={gridStyle}>
+            <div
+              style={
+                gridStyle
+              }
+            >
 
               {[
                 [
@@ -3568,7 +4489,12 @@ function Ink() {
                 ]
 
               ].map(
-                ([label, value]) => (
+                (
+                  [
+                    label,
+                    value
+                  ]
+                ) => (
 
                   <div
                     key={
@@ -3606,11 +4532,13 @@ function Ink() {
 
           </div>
 
-          {/* ================================================= */}
           {/* FLIP TONERS */}
-          {/* ================================================= */}
 
-          <div style={cardStyle}>
+          <div
+            style={
+              cardStyle
+            }
+          >
 
             <div
               style={{
@@ -3698,8 +4626,11 @@ function Ink() {
                   );
 
                 const after =
-                  beforeAmount +
-                  added;
+                  roundNumber(
+                    beforeAmount +
+                    added,
+                    4
+                  );
 
                 return (
 
@@ -3809,7 +4740,10 @@ function Ink() {
                         Added:
                         {" "}
                         <strong>
-                          +{added} g
+                          +{roundNumber(
+                            added,
+                            4
+                          )} g
                         </strong>
                       </span>
 
@@ -3855,8 +4789,6 @@ function Ink() {
                       </button>
 
                     </div>
-
-                    {/* FLIP TRIALS */}
 
                     <div
                       style={{
@@ -3946,8 +4878,11 @@ function Ink() {
 
               Flip Additions:
               {" "}
-              {getAllTonerTotal(
-                flipToners
+              {roundNumber(
+                getAllTonerTotal(
+                  flipToners
+                ),
+                4
               )}
               {" "}g
 
@@ -3955,12 +4890,13 @@ function Ink() {
 
           </div>
 
-          {/* ================================================= */}
-          {/* AFTER FLIP COLOR CHECK */}
-          {/* NO DE */}
-          {/* ================================================= */}
+          {/* AFTER FLIP */}
 
-          <div style={cardStyle}>
+          <div
+            style={
+              cardStyle
+            }
+          >
 
             <h2
               style={{
@@ -3974,7 +4910,11 @@ function Ink() {
               After Flip — Actual Color Check
             </h2>
 
-            <div style={gridStyle}>
+            <div
+              style={
+                gridStyle
+              }
+            >
 
               {[
                 [
@@ -3996,7 +4936,13 @@ function Ink() {
                 ]
 
               ].map(
-                ([label, value, setter]) => (
+                (
+                  [
+                    label,
+                    value,
+                    setter
+                  ]
+                ) => (
 
                   <div
                     key={
@@ -4035,9 +4981,7 @@ function Ink() {
 
             </div>
 
-            {/* ================================================= */}
             {/* FINAL TONER SUMMARY */}
-            {/* ================================================= */}
 
             <div
               style={{
@@ -4070,7 +5014,9 @@ function Ink() {
 
                 ])
               )
-                .filter(Boolean)
+                .filter(
+                  Boolean
+                )
                 .map(
                   tonerNumber => {
 
@@ -4107,8 +5053,11 @@ function Ink() {
                       );
 
                     const afterAmount =
-                      beforeAmount +
-                      addedAmount;
+                      roundNumber(
+                        beforeAmount +
+                        addedAmount,
+                        4
+                      );
 
                     const finalTotal =
                       getAfterTotal();
@@ -4189,16 +5138,17 @@ function Ink() {
 
               FINAL TOTAL:
               {" "}
-              {getAfterTotal()}
+              {roundNumber(
+                getAfterTotal(),
+                4
+              )}
               {" "}g
 
             </div>
 
           </div>
 
-          {/* ================================================= */}
           {/* SAVE AFTER FLIP */}
-          {/* ================================================= */}
 
           <div
             style={{
