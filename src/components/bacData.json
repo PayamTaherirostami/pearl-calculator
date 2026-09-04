@@ -26305,5 +26305,32 @@
         "Texture": "CRYSTAL",
         "Cap": "MED",
         "Column1": "96080-CRYSTAL-VOZ"
+    },
+    {
+        "BAC": 870,
+        "Cart": 1,
+        "Bin": "D6",
+        "Airline": "ICO",
+        "Texture": "TELA",
+        "Cap": "MED",
+        "Column1": "870-TELA-ICO"
+    },
+    {
+        "BAC": 870,
+        "Cart": 1,
+        "Bin": "D6",
+        "Airline": "TBC",
+        "Texture": "TELA",
+        "Cap": "MED",
+        "Column1": "870-TELA-TBC"
+    },
+    {
+        "BAC": 870,
+        "Cart": 1,
+        "Bin": "D6",
+        "Airline": "STD",
+        "Texture": "TELA",
+        "Cap": "MED",
+        "Column1": "870-TELA-STD"
     }
 ]

@@ -140,6 +140,25 @@ const TONERS = [
   }
 ];
 
+const getTonerDisplayName = (tonerNumber) => {
+  const toner = TONERS.find(
+    item =>
+      String(item.number) ===
+      String(tonerNumber)
+  );
+
+  if (!toner) {
+    return `Toner #${tonerNumber}`;
+  }
+
+  // For 500 and above, show the name
+  if (Number(tonerNumber) >= 500) {
+    return toner.name;
+  }
+
+  // For normal toners, keep the number
+  return `Toner #${tonerNumber}`;
+};
 // =====================================================
 // NUMBER HELPERS
 // =====================================================
@@ -3416,7 +3435,7 @@ function Ink() {
                                   }}
                                 >
 
-                                  <div
+                                  {/* <div
                                     style={{
                                       fontSize:
                                         "12px",
@@ -3427,8 +3446,15 @@ function Ink() {
                                   >
                                     Toner #
                                     {toner.tonerNumber}
-                                  </div>
-
+                                  </div> */}
+<div
+  style={{
+    fontSize: "12px",
+    opacity: "0.75"
+  }}
+>
+  {getTonerDisplayName(toner.tonerNumber)}
+</div>
                                   <div
                                     style={{
                                       fontSize:
@@ -5087,8 +5113,7 @@ function Ink() {
                       >
 
                         <strong>
-                          Toner #
-                          {tonerNumber}
+                         {getTonerDisplayName(tonerNumber)}
                         </strong>
 
                         {" | "}
