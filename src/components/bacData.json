@@ -4216,9 +4216,9 @@
         "Cart": 3,
         "Bin": "G40",
         "Airline": "CAT",
-        "Texture": "CARBINIUM",
+        "Texture": "CARBONIUM",
         "Cap": "MED",
-        "Column1": "81537-CARBINIUM-CAT"
+        "Column1": "81537-CARBONIUM-CAT"
     },
     {
         "BAC": 81544,
@@ -23053,9 +23053,9 @@
         "Cart": 15,
         "Bin": "H234",
         "Airline": "WJI",
-        "Texture": "LINEN",
+        "Texture": "1031",
         "Cap": "MED",
-        "Column1": "95552-LINEN-WJI"
+        "Column1": "95552-1031-WJI"
     },
     {
         "BAC": 95553,
