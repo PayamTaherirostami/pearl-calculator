@@ -186,7 +186,6 @@ const textureOptions = [
 "MESA P",
 "MESA P LEFT",
 "MOSAIC",
-"MOSIAC",
 "NABUK",
 "NEW HEAVY WOVEN",
 "O TEX",
@@ -466,9 +465,9 @@ export default function BACLookup() {
             Bin: {result.Bin}
           </div>
 
-          <div style={{ fontSize: 22, marginTop: 5 }}>
+          {/* <div style={{ fontSize: 22, marginTop: 5 }}>
             Airline: {result.Airline}
-          </div>
+          </div> */}
 
           <div style={{ fontSize: 13, marginTop: 5, color: "pink" }}>
             Pos: {result.POS}

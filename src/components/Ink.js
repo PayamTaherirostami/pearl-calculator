@@ -2500,6 +2500,11 @@ function Ink() {
                         Texture:
                         {" "}
                         {record.texture}
+                                                {" | "}
+
+                        Top Sheet:
+                        {" "}
+                        {record.ts}
                       </div>
 
                     </div>
