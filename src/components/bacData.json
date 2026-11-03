@@ -3678,10 +3678,21 @@
     "Cart": 11,
     "Bin": "J172",
     "Airline": "TBC",
-    "Texture": 1039,
-    "OLD TEXTURE": "NAVAJO",
+    "Texture": "METAL",
+    "OLD TEXTURE": "METAL",
     "Cap": "MED",
-    "Column1": "94800-1039-TBC",
+    "Column1": "94800-METAL-TBC",
+    "POS": "TBC/ICO/STD"
+  },
+    {
+    "BAC": 94800,
+    "Cart": 11,
+    "Bin": "J172",
+    "Airline": "ICO",
+    "Texture": "METAL",
+    "OLD TEXTURE": "METAL",
+    "Cap": "MED",
+    "Column1": "94800-METAL-ICO",
     "POS": "TBC/ICO/STD"
   },
   {
