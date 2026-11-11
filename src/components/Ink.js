@@ -390,7 +390,9 @@ function Ink() {
 
   const [beforeDeltaE, setBeforeDeltaE] =
     useState("");
-
+const [beforeDeltaL, setBeforeDeltaL] = useState("");
+const [beforeDeltaA, setBeforeDeltaA] = useState("");
+const [beforeDeltaB, setBeforeDeltaB] = useState("");
   // ===================================================
   // DAY 2
   // ===================================================
@@ -985,18 +987,16 @@ function Ink() {
 
       // ORIGINAL MIX
 
-      beforeFlip: {
+beforeFlip: {
+  toners: beforeToners,
 
-        toners:
-          beforeToners,
+  deltaE: beforeDeltaE,
+  deltaL: beforeDeltaL,
+  deltaA: beforeDeltaA,
+  deltaB: beforeDeltaB,
 
-        deltaE:
-          beforeDeltaE,
-
-        totalInk:
-          beforeTotal
-
-      },
+  totalInk: beforeTotal
+},
 
       createdAt:
         serverTimestamp(),
@@ -1318,7 +1318,9 @@ function Ink() {
       record.beforeFlip?.deltaE ||
       ""
     );
-
+setBeforeDeltaL(record.beforeFlip?.deltaL ?? "");
+setBeforeDeltaA(record.beforeFlip?.deltaA ?? "");
+setBeforeDeltaB(record.beforeFlip?.deltaB ?? "");
     // DAY 2
 
     setDay2DeltaE(
@@ -1449,7 +1451,9 @@ function Ink() {
 
     setBeforeToners([]);
     setBeforeDeltaE("");
-
+setBeforeDeltaL("");
+setBeforeDeltaA("");
+setBeforeDeltaB("");
     setDay2DeltaE("");
     setDay2DeltaL("");
     setDay2DeltaA("");
@@ -1768,30 +1772,21 @@ function Ink() {
       status:
         "after_flip",
 
-      beforeFlip: {
+beforeFlip: {
+  toners: beforeToners,
 
-        toners:
-          beforeToners,
+  deltaE: beforeDeltaE,
+  deltaL: beforeDeltaL,
+  deltaA: beforeDeltaA,
+  deltaB: beforeDeltaB,
 
-        deltaE:
-          beforeDeltaE,
+  day2DeltaE: day2DeltaE,
+  day2DeltaL: day2DeltaL,
+  day2DeltaA: day2DeltaA,
+  day2DeltaB: day2DeltaB,
 
-        day2DeltaE:
-          day2DeltaE,
-
-        day2DeltaL:
-          day2DeltaL,
-
-        day2DeltaA:
-          day2DeltaA,
-
-        day2DeltaB:
-          day2DeltaB,
-
-        totalInk:
-          beforeTotal
-
-      },
+  totalInk: beforeTotal
+},
 
       flip: {
 
@@ -2763,28 +2758,17 @@ function Ink() {
                       ORIGINAL MIX
                     </h3>
 
-                    <div
-                      style={{
-                        fontSize:
-                          "12px"
-                      }}
-                    >
-
-                      Original ΔE:
-                      {" "}
-                      {record.beforeFlip?.deltaE || "-"}
-
-                      <br />
-
-                      Total:
-                      {" "}
-                      {roundNumber(
-                        beforeTotal,
-                        4
-                      )}
-                      {" "}g
-
-                    </div>
+<div style={{ fontSize: "12px" }}>
+  Original ΔE: {record.beforeFlip?.deltaE ?? "-"}
+  <br />
+  Original ΔL: {record.beforeFlip?.deltaL ?? "-"}
+  <br />
+  Original Δa: {record.beforeFlip?.deltaA ?? "-"}
+  <br />
+  Original Δb: {record.beforeFlip?.deltaB ?? "-"}
+  <br />
+  Total: {roundNumber(beforeTotal, 4)} g
+</div>
 
                     {(
                       record.beforeFlip?.toners ||
@@ -4254,7 +4238,38 @@ function Ink() {
                   inputStyle
                 }
               />
+<div>
+  <label style={labelStyle}>Original ΔL</label>
+  <input
+    type="number"
+    step="any"
+    value={beforeDeltaL}
+    onChange={(e) => setBeforeDeltaL(e.target.value)}
+    style={inputStyle}
+  />
+</div>
 
+<div>
+  <label style={labelStyle}>Original Δa</label>
+  <input
+    type="number"
+    step="any"
+    value={beforeDeltaA}
+    onChange={(e) => setBeforeDeltaA(e.target.value)}
+    style={inputStyle}
+  />
+</div>
+
+<div>
+  <label style={labelStyle}>Original Δb</label>
+  <input
+    type="number"
+    step="any"
+    value={beforeDeltaB}
+    onChange={(e) => setBeforeDeltaB(e.target.value)}
+    style={inputStyle}
+  />
+</div>
             </div>
 
           )}
